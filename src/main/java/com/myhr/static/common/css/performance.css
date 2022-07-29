@@ -1,0 +1,308 @@
+@charset "UTF-8";
+/*通用*/
+.process {
+  width: 100%;
+  padding: 10px 30px 25px;
+  display: table;
+  overflow: hidden;
+  border-bottom: 1px solid #e5e5e5;
+  margin-bottom: 20px; }
+  .process ul {
+    width: 100%;
+    display: table-row; }
+    .process ul li {
+      display: table-cell;
+      min-width: 126px;
+      height: 45px;
+      line-height: 45px;
+      padding-right: 126px;
+      /* height: 30px;
+            line-height: 30px;
+            padding-right: 30px;*/
+      position: relative; }
+      .process ul li .cont {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 126px;
+        height: 100%;
+        /*width: 30px;
+                height: 30px;*/
+        text-align: center;
+        border-radius: 10px;
+        background: #e5e5e5;
+        font-size: 14px; }
+        .process ul li .cont .num {
+          /*font-size: 16px;*/
+          display: inline-block; }
+          .process ul li .cont .num:after {
+            content: "、"; }
+        .process ul li .cont .infor {
+          display: inline-block;
+          /*position: absolute;
+                    top: 35px;
+                    left: 50%;
+                    margin-left: -50px;
+                    width: 100px;
+                    line-height: 1;*/ }
+      .process ul li .line {
+        width: 100%;
+        height: 2px;
+        margin-top: 21px;
+        border-top: 2px dotted #ccc;
+        /*background: #e5e5e5;*/
+        /*float: left;*/ }
+      .process ul li.active .line {
+        border-top-color: #108ee9;
+        /*background: $highLight;*/ }
+      .process ul li.active .cont {
+        background: #108ee9;
+        color: #fff; }
+      .process ul li.active .infor {
+        /*color: $highLight;*/ }
+      .process ul li:first-child {
+        width: 126px; }
+        .process ul li:first-child .line {
+          display: none; }
+
+.form-list-setProcessCont.form-list {
+  width: 80%;
+  min-width: 400px;
+  margin: 0 auto; }
+  .form-list-setProcessCont.form-list .group {
+    width: 100%;
+    padding: 0 80px;
+    margin: 0; }
+    .form-list-setProcessCont.form-list .group .setProcess-mycheckbox {
+      position: absolute;
+      top: 0;
+      left: 100%;
+      margin-left: -70px;
+      white-space: nowrap; }
+    .form-list-setProcessCont.form-list .group .setProcessContTitle {
+      /*font-size:14px;*/
+      line-height: 30px;
+      color: #333;
+      text-align: center;
+      /*font-weight:bold;*/ }
+    .form-list-setProcessCont.form-list .group.percent6 {
+      width: 60%; }
+    .form-list-setProcessCont.form-list .group.percent4 {
+      width: 40%; }
+
+.form-list.form-list-largeLabel .group > label {
+  width: 150px; }
+
+.form-list.form-list-largeLabel .group > .scm-input-wrap {
+  width: calc(100% - 155px); }
+
+.form-list.form-list-mediumLabel .group > label {
+  width: 105px; }
+
+.form-list.form-list-mediumLabel .group > .scm-input-wrap {
+  width: calc(100% - 110px); }
+
+.form-list-groupTwo.form-list .group {
+  width: 50%; }
+
+.form-list-groupHeight40 .group {
+  height: 40px; }
+
+.form-list .group-select .group-select-list {
+  float: left;
+  width: 33%;
+  position: relative;
+  margin-left: 0.5%; }
+  .form-list .group-select .group-select-list:first-child {
+    margin-left: 0; }
+  .form-list .group-select .group-select-list .scm-input-wrap {
+    float: none;
+    width: 100%; }
+  .form-list .group-select .group-select-list ul {
+    left: 0;
+    min-width: 100%; }
+
+.group label.largeLabel {
+  /*white-space: nowrap;*/
+  line-height: 1.2; }
+
+.marginBot10 {
+  margin-bottom: 10px; }
+
+.performanceCont {
+  background: #fff;
+  padding-top: 10px;
+  /*height: 100vh;*/ }
+  .performanceCont.hasProcess .process {
+    margin-bottom: 0; }
+  .performanceCont.hasProcess .performanceContent {
+    height: calc( 100% - 75px);
+    /*box-shadow: 0 -1px 1px #e5e5e5;*/ }
+  .performanceCont .performanceContent {
+    padding: 0 0 10px;
+    height: 100%;
+    overflow: auto; }
+    .performanceCont .performanceContent .leftside-sub {
+      border-right: 1px solid #e5e5e5; }
+    .performanceCont .performanceContent .leftside-sub, .performanceCont .performanceContent .main-sub {
+      height: 100% !important;
+      padding-top: 10px;
+      overflow: auto; }
+    .performanceCont .performanceContent .leftside-subinner {
+      height: auto; }
+  .performanceCont .performance-title {
+    font-size: 20px;
+    font-weight: bold;
+    padding: 5px 0 15px;
+    text-align: center;
+    color: #333; }
+  .performanceCont .performance-import {
+    padding: 10px; }
+    .performanceCont .performance-import .performance-list {
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      min-height: 100px;
+      /*padding: 0px 0 10px;*/ }
+      .performanceCont .performance-import .performance-list .title {
+        padding: 5px 10px;
+        font-size: 16px;
+        line-height: 30px;
+        border-bottom: 1px solid #e5e5e5; }
+        .performanceCont .performance-import .performance-list .title .performance-infor {
+          float: left;
+          margin-left: 20px; }
+          .performanceCont .performance-import .performance-list .title .performance-infor input[type=text] {
+            width: auto;
+            font-size: 14px; }
+          .performanceCont .performance-import .performance-list .title .performance-infor:first-child {
+            margin-left: 0; }
+        .performanceCont .performance-import .performance-list .title .performance-title-btn {
+          float: right; }
+          .performanceCont .performance-import .performance-list .title .performance-title-btn button i {
+            margin-right: 0; }
+  .performanceCont .performance-detail-list {
+    margin: 15px 80px;
+    padding: 10px 0;
+    box-shadow: 1px 1px 5px #ddd,-1px -1px 5px #ddd;
+    border-radius: 3px;
+    border-top-right-radius: 0;
+    position: relative; }
+    .performanceCont .performance-detail-list:after {
+      content: attr(num);
+      display: block;
+      position: absolute;
+      top: 0;
+      left: -31px;
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
+      background: #eee;
+      text-align: center;
+      box-shadow: -1px -1px 5px #ddd,0 1px 2px #ddd; }
+    .performanceCont .performance-detail-list .performance-detail-btns {
+      position: absolute;
+      top: 0;
+      right: -68px;
+      /*box-shadow: 1px 1px 5px #ddd,-1px -1px 5px #ddd;*/
+      box-shadow: 1px 1px 5px #ddd,-1px 0px 1px #fff,0 -1px 2px #ddd; }
+      .performanceCont .performance-detail-list .performance-detail-btns button {
+        display: block;
+        margin-top: -1px;
+        position: relative;
+        z-index: 5;
+        border-radius: 0; }
+        .performanceCont .performance-detail-list .performance-detail-btns button:hover {
+          z-index: 6; }
+  .performanceCont .scm-input-wrap .text {
+    padding: 3px 0 0;
+    line-height: 1.5; }
+  .performanceCont .performance-sum {
+    position: relative;
+    padding: 0 10px; }
+    .performanceCont .performance-sum .performance-sum-score {
+      float: left;
+      width: 50%; }
+      .performanceCont .performance-sum .performance-sum-score .group {
+        width: 100%;
+        margin-left: 0; }
+    .performanceCont .performance-sum .performance-sum-infor {
+      min-height: 240px;
+      position: absolute;
+      top: 0;
+      padding-top: 20px;
+      left: 52%;
+      /*margin-left: 2.3%;*/
+      /*height: 100%;*/ }
+      .performanceCont .performance-sum .performance-sum-infor .infor {
+        position: absolute;
+        bottom: 22px;
+        left: 0; }
+      .performanceCont .performance-sum .performance-sum-infor .title {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        padding-left: 110px; }
+      .performanceCont .performance-sum .performance-sum-infor p {
+        font-size: 12px;
+        line-height: 1.5; }
+  .performanceCont .performance-sum-Interview {
+    margin: 0; }
+    .performanceCont .performance-sum-Interview .group {
+      padding-right: 80px; }
+      .performanceCont .performance-sum-Interview .group label {
+        font-weight: bold; }
+  .performanceCont .marginTop10 {
+    margin-top: 10px; }
+  .performanceCont .innerformList .form-list {
+    margin: 0;
+    width: calc( 100% - 55px); }
+    .performanceCont .innerformList .form-list .group > label {
+      /*white-space: nowrap;*/ }
+    .performanceCont .innerformList .form-list .mycheckbox {
+      white-space: nowrap;
+      margin-left: 10px; }
+
+.group .anticon {
+  top: 7px; }
+
+.performanceCont-operation {
+  margin-top: 20px; }
+  .performanceCont-operation .conditionbtn {
+    text-align: center;
+    float: none; }
+    .performanceCont-operation .conditionbtn button {
+      margin-left: 10px; }
+      .performanceCont-operation .conditionbtn button:first-child {
+        margin-left: 0; }
+
+.leftside-sub .form-list {
+  margin: 10px 10px 0; }
+  .leftside-sub .form-list.form-list-smallLabel .group > label {
+    width: 40px; }
+  .leftside-sub .form-list.form-list-smallLabel .group .scm-input-wrap {
+    width: calc(100% - 45px); }
+  .leftside-sub .form-list.form-list-smallLabel .group ul {
+    left: 45px;
+    min-width: calc(100% - 45px); }
+  .leftside-sub .form-list .group {
+    width: 100%; }
+
+.form-list-label100 .group > label {
+  width: 90px; }
+
+.form-list-label100 .group .scm-input-wrap {
+  width: calc(100% - 95px); }
+
+.ztree li span.button.noline_docu {
+  display: none; }
+
+.ztree .ztreeDiyBtn1 {
+  font-size: 15px;
+  font-weight: bold;
+  color: #333;
+  vertical-align: middle;
+  margin-top: -3px;
+  margin-left: 5px; }
+  .ztree .ztreeDiyBtn1:hover {
+    color: #000; }

@@ -1,0 +1,37 @@
+server:
+  port: 8888
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://10.50.10.48:3306/hr_test3?useUnicode=true&characterEncoding=utf8&useSSL=false&allowMultiQueries=true&serverTimezone=GMT%2B8
+    username: root
+    password: richardsun
+    type: com.alibaba.druid.pool.DruidDataSource
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 123456
+    database: 0
+    lettuce:
+      pool:
+        max-idle: 16
+        max-active: 32
+        min-idle: 8
+cas:
+  server:
+    urlPrefix: https://sso-test.digi800.com/cas
+    loginUrl: https://sso-test.digi800.com/cas/login
+    logoutUrl: https://sso-test.digi800.com/cas/logout
+  client:
+    url: http://localhost:8888
+    login: http://localhost:8888/login
+    logout: http://localhost:8888/logout
+    index: http://localhost:8888/index
+  # 动态开启 cas 单点登录
+  loginType: cas
+  # cas 验票拦截路径
+  urlPattern: /*
+  # cas不拦截的路径
+  ignorePattern: /static/*|/api/*|/test/*
+

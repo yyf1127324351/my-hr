@@ -1,0 +1,44 @@
+﻿@charset "utf-8";
+html
+{ 
+	width:100%;
+	height:100%;
+	overflow-x:hidden;
+	overflow-y:auto;
+}
+body{
+    background:url(../img/bg.png) repeat;
+	font-size:12px;
+	font-family:"Microsoft YaHei","微软雅黑";
+	width:100%;
+	height:100%;
+	margin:0; 
+	padding:0;
+}
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, p, img{
+	margin:0;
+	padding:0;
+}
+input, textarea, select {
+	margin:0;
+	padding:0;
+	border:0;
+	font-family:"Microsoft YaHei","微软雅黑";}
+img { border:0; }
+ol, ul, li { list-style:none; }
+a{ text-decoration:none;}
+
+.clearfix:after { content: '\20'; display: block; height: 0; clear: both }
+.clearfix { zoom: 1 }
+
+.w1280{ position:relative; width:1280px; margin:0 auto;}
+
+.red{ color:#eb1313;}
+.green{ color:#50ad1a;}
+.blue{ color:#1283e5;}
+.gray{ color:#999;}
+.black{ color:#333;}
+.orange{ color:#f60;}
+
+.fl{ float:left;}
+.fr{ float:right;}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.myhr.mapper.OperatorMapper">
+
+    <select id="getOperatorById" resultType="com.myhr.hr.model.Operator">
+        select
+        o.id as id,
+        o.operator_name as operatorName
+        FROM operator o
+        WHERE o.id = 1
+    </select>
+</mapper>
