@@ -24,7 +24,7 @@ cas:
     loginUrl: https://sso-test.digi800.com/cas/login
     logoutUrl: https://sso-test.digi800.com/cas/logout
   client:
-    url: http://localhost:8888
+    url: http://localhost:8888/
     login: http://localhost:8888/login
     logout: http://localhost:8888/logout
     index: http://localhost:8888/index

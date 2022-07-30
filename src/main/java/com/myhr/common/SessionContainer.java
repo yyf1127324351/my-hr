@@ -1,7 +1,8 @@
 package com.myhr.common;
 
 
-import com.myhr.hr.OperatorDto;
+import com.myhr.hr.dto.OperatorDto;
+import com.myhr.hr.model.Operator;
 
 /**
  * @Description 用户session容器
@@ -10,13 +11,13 @@ import com.myhr.hr.OperatorDto;
  */
 public class SessionContainer {
 
-    private static final ThreadLocal<OperatorDto> sessionThreadLocal = new ThreadLocal<>();
+    private static final ThreadLocal<Operator> sessionThreadLocal = new ThreadLocal<>();
 
-    public static OperatorDto getSession() {
+    public static Operator getSession() {
         return sessionThreadLocal.get();
     }
 
-    public static void setSession(OperatorDto c) { sessionThreadLocal.set(c); }
+    public static void setSession(Operator c) { sessionThreadLocal.set(c); }
 
     public static void clear() {
         sessionThreadLocal.set(null);

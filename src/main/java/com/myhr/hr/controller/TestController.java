@@ -18,7 +18,7 @@ public class TestController {
     @GetMapping("/test")
     public BaseResponse test() {
         Operator operator = new Operator();
-        operator.setId(3);
+        operator.setId(3L);
         operator.setOperatorName("王五");
         return BaseResponse.success(operator);
     }

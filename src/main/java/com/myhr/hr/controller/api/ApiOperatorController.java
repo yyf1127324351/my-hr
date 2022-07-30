@@ -18,7 +18,7 @@ public class ApiOperatorController {
     @GetMapping("/test")
     public BaseResponse test() {
         Operator operator = new Operator();
-        operator.setId(1);
+        operator.setId(1L);
         operator.setOperatorName("李四");
         return BaseResponse.success(operator);
     }

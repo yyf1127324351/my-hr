@@ -11,4 +11,12 @@
         FROM operator o
         WHERE o.id = 1
     </select>
+    <select id="getOperatorByMap" resultType="com.myhr.hr.model.Operator">
+        select
+        o.id as id,
+        o.operator_name as operatorName,
+        o.operator_loginName as operatorLoginName
+        FROM operator o
+        WHERE o.operator_loginName = #{loginName}
+    </select>
 </mapper>

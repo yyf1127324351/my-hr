@@ -4,6 +4,8 @@ import com.myhr.hr.model.Operator;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.Map;
+
 /**
  * @Description
  * @Author yyf
@@ -15,4 +17,5 @@ public interface  OperatorMapper {
 
     Operator getOperatorById();
 
+    Operator getOperatorByMap(Map<String, String> map);
 }

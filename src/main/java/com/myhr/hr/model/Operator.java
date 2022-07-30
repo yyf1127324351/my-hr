@@ -16,7 +16,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Operator implements Serializable {
-    private Integer id;
+    private Long id;
+    private Long operatorId;
     private String operatorName;
+    private String operatorLoginName;
 
 }

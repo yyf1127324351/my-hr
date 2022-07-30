@@ -14,6 +14,7 @@
 
     <link rel="stylesheet" type="text/css" href="/static/common/easyUI/themes/default/easyui.css">
     <link rel="stylesheet" type="text/css" href="/static/common/css/supper/superBlue.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/common/fonts/font-awesome.css"/>
     <link rel="stylesheet" type="text/css" href="/static/common/fonts/font-awesome.min.css"/>
     <link rel="stylesheet" type="text/css" href="/static/common/easyUI/themes/icon.css">
 
