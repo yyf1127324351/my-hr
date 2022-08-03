@@ -2,7 +2,6 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta charset="utf-8">
     <meta name="renderer" content="webkit">
     <title>后台系统</title>
     <link rel="icon" type="image/x-ico" href="/static/common/favicon.ico" mce_href="/static/common/favicon.ico"/>

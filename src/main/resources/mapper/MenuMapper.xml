@@ -30,17 +30,17 @@
 		</where>
 	</sql>
 	<insert id="insert">
-		insert into menu (name,code,type,parent_id,level,url,sort_number) values
+		insert into sys_menu (name,code,type,parent_id,level,url,sort_number) values
 		(
 			#{name},#{code},#{type},#{parentId},#{level},#{url},#{sortNumber}
 		)
 
 	</insert>
 	<update id="updateParentMenuHasChildren">
-		UPDATE menu SET has_child = #{hasChild} where id = #{parentId}
+		UPDATE sys_menu SET has_child = #{hasChild} where id = #{parentId}
 	</update>
 	<update id="update">
-		UPDATE menu
+		UPDATE sys_menu
 		<set>
 			url = #{url},
 			<if test="name != null and name != ''">
@@ -63,7 +63,7 @@
 	</update>
 	<update id="deleteMenu">
 		<foreach collection="ids" index="index" item="item" open="" close="" separator=";">
-			UPDATE menu SET deleted = 1
+			UPDATE sys_menu SET deleted = 1
 			<where>
 				id = #{item}
 			</where>
@@ -73,31 +73,31 @@
 	<select id="leftLevel1List" resultType="com.myhr.hr.vo.MenuVo">
 		select
 		<include refid="sql_menu_column"/>
-		from menu m where m.deleted = 0 and m.id in (select
+		from sys_menu m where m.deleted = 0 and m.id in (select
 		m2.parent_id
-		from menu m2
-		join menu_user mu on mu.menu_id = m2.id
+		from sys_menu m2
+		join sys_menu_user mu on mu.menu_id = m2.id
 		where mu.user_id = #{userId} and m2.type = 0 and m2.`level` = 2 and m2.deleted = 0
 		) order by m.sort_number asc
 	</select>
     <select id="leftLevel2List" resultType="com.myhr.hr.vo.MenuVo">
         select
 		<include refid="sql_menu_column"/>
-		from menu m
-		join menu_user mu on mu.menu_id = m.id
+		from sys_menu m
+		join sys_menu_user mu on mu.menu_id = m.id
 		where mu.user_id = #{userId} and m.type = 0  and m.`level` = 2 and m.deleted = 0
 		order by  m.sort_number asc
     </select>
     <select id="getAllMenuTree" resultType="com.myhr.hr.vo.MenuVo">
         select
         <include refid="sql_menu_column"/>
-        FROM menu m
+        FROM sys_menu m
         WHERE m.deleted = 0
     </select>
 	<select id="getMenuPageList" resultType="com.myhr.hr.vo.MenuVo">
 		select
 		<include refid="sql_menu_column"/>
-		from menu m
+		from sys_menu m
 		<include refid="sql_where"/>
 		ORDER BY m.parent_id,m.sort_number
 		<if test="page !=null ">
@@ -108,19 +108,19 @@
 	<select id="getMenuPageCount" resultType="java.lang.Long">
 		select
 		count(1)
-		from menu m
+		from sys_menu m
 		<include refid="sql_where"/>
 	</select>
 	<select id="getMenuByParentId" resultType="com.myhr.hr.model.MenuDto">
 		select
 		<include refid="sql_menu_column"/>
-		from menu m
+		from sys_menu m
 		WHERE m.parent_id = #{parentId} and m.deleted = 0
 	</select>
 	<select id="getAllMenuTreeNode" resultType="com.myhr.hr.vo.TreeNode">
 		select
 		<include refid="sql_menu_column"/>
-		FROM menu m
+		FROM sys_menu m
 		WHERE m.deleted = 0
 	</select>
 </mapper>

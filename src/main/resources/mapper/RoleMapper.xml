@@ -33,7 +33,7 @@
         </if>
     </sql>
     <insert id="addRole">
-        INSERT INTO auth_role (
+        INSERT INTO sys_auth_role (
             role_code,
             role_name,
             status,
@@ -45,7 +45,7 @@
     </insert>
 
     <update id="updateRole">
-        UPDATE auth_role
+        UPDATE sys_auth_role
         <set>
             update_time = #{updateTime},
             <if test="roleCode != null and roleCode != ''">
@@ -73,7 +73,7 @@
     <select id="getRolePageList" resultType="com.myhr.hr.model.RoleDto">
         SELECT
         <include refid="sql_column"/>
-        FROM auth_role r
+        FROM sys_auth_role r
         <include refid="sql_where"/>
         <include refid="sql_order"/>
         <if test="page !=null ">
@@ -82,7 +82,7 @@
     </select>
     <select id="getRolePageCount" resultType="java.lang.Long">
         SELECT count(1)
-        FROM auth_role r
+        FROM sys_auth_role r
         <include refid="sql_where"/>
     </select>
 
