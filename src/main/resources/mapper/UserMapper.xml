@@ -11,4 +11,12 @@
         FROM user u
         WHERE u.login_name = #{loginName}
     </select>
+    <select id="queryUserById" resultType="com.myhr.hr.model.UserDto">
+        select
+        u.id as id,
+        u.user_name as userName,
+        u.login_name as loginName
+        FROM user u
+        WHERE u.id = #{userId}
+    </select>
 </mapper>

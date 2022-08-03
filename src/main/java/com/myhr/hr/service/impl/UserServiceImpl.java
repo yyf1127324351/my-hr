@@ -1,6 +1,7 @@
 package com.myhr.hr.service.impl;
 
 import com.myhr.hr.mapper.UserMapper;
+import com.myhr.hr.model.UserDto;
 import com.myhr.hr.service.UserService;
 import com.myhr.hr.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,4 +19,10 @@ public class UserServiceImpl implements UserService {
     public UserVo getUserByMap(Map<String, String> map) {
         return userMapper.getUserByMap(map);
     }
+
+    @Override
+    public UserDto queryUserById(Long userId) {
+        return userMapper.queryUserById(userId);
+    }
+
 }

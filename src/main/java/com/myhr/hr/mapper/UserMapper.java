@@ -1,5 +1,6 @@
 package com.myhr.hr.mapper;
 
+import com.myhr.hr.model.UserDto;
 import com.myhr.hr.vo.UserVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -16,4 +17,6 @@ import java.util.Map;
 public interface UserMapper {
 
     UserVo getUserByMap(Map<String, String> map);
+
+    UserDto queryUserById(Long userId);
 }

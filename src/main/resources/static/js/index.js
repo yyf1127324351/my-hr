@@ -43,61 +43,12 @@ $(function() {
         });
     });
 
-    /*修改主题*/
-    $('#themeSetting').on('click', function() {
-        var themeWin = $('#win').dialog({
-            width: 460,
-            height: 260,
-            modal: true,
-            title: '主题设置',
-            buttons: [{
-                text: '保存',
-                id: 'btn-sure',
-                handler: function() {
-                    themeWin.panel('close');
-                }
-            }, {
-                text: '关闭',
-                handler: function() {
-                    themeWin.panel('close');
-                }
-            }],
-            onOpen: function() {
-                $(".themeItem").show();
-            }
-        });
-    });
-    $(".themeItem ul li").on('click', function() {
-        $(".themeItem ul li").removeClass('themeActive');
-        $(this).addClass('themeActive');
-    });
-
 
 });
 $.parser.onComplete = function() {
     $("#index").css('opacity', 1);
 }
 
-/**
- * 初始化示例
- */
-// function initDemo() {
-//     /*初始化示例div*/
-//     var demoPanelId = 'demoPanel' + (new Date()).getTime();
-//     $('#demoPanel').attr('id', demoPanelId);
-//     var demoPaneCodeId = 'demoPanelCode' + (new Date()).getTime();
-//     $('#demoPanelCode').attr('id', demoPaneCodeId);
-//
-//     /*示例导航选中样式*/
-//     $(".demo-list>ul>li").on('click', function() {
-//         $('#et-demo').tabs('select', '预览');
-//
-//         $(this).siblings().removeClass('super-accordion-selected');
-//         $(this).addClass('super-accordion-selected');
-//         //加载页面
-//         $('#' + demoPanelId).panel('open').panel('refresh', $(this).data('url'));
-//     });
-// }
 
 function openTab(text,url){
     if($('#tabs').tabs('exists',text)){
