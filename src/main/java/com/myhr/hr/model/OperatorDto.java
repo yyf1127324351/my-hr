@@ -1,4 +1,4 @@
-package com.myhr.hr.dto;
+package com.myhr.hr.model;
 
 import lombok.Data;
 

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta charset="utf-8">
     <meta name="renderer" content="webkit">
-    <title>HR系统</title>
+    <title>后台系统</title>
     <link rel="icon" type="image/x-ico" href="/static/common/favicon.ico" mce_href="/static/common/favicon.ico"/>
     <script type="text/javascript" src="/static/common/js/jquery-1.11.3.min.js"></script>
     <script type="text/javascript" src="/static/common/js/jquery.easyui.min.js"></script>
@@ -49,8 +49,8 @@
             </div>
             <div class="super-setting-right">
                 <ul>
-                    <li class="user" style="text-align: center">
-                        <span style="float: none">${loginName}</span>
+                    <li class="user" style="width:200px;text-align: center">
+                        <span style="float: none">${userName}</span>
                     </li>
                     <li>
                         <div style="height: 50px" class="super-setting-icon">
@@ -72,17 +72,19 @@
 <div id="easyui-layout-west" data-options="region:'west',title:'菜单',border:false">
     <!--左侧导航-->
     <div class="easyui-accordion" data-options="border:false,fit:true,selected:true">
-
-        <c:forEach items="${level1List}" var="item">
-            <div title="${item.name}" data-options="iconCls:'fa fa-navicon'">
-
-                <c:forEach items="${item.children}" var="item2">
-                    <ul class="level2">
-                        <li data-url='${item2.url}'>${item2.name}</li>
-                    </ul>
-                </c:forEach>
-            </div>
-        </c:forEach>
+        <#if level1List??>
+            <#list level1List as item>
+                <div title="${item.name}" data-options="iconCls:'fa fa-navicon'">
+                     <#if item.children??>
+                        <ul class="level2">
+                            <#list item.children as item2>
+                                <li data-url='${item2.url!}'>${item2.name!}</li>
+                            </#list>
+                        </ul>
+                     </#if>
+                </div>
+            </#list>
+        </#if>
     </div>
 
 </div>

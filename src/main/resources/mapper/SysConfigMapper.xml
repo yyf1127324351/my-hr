@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.myhr.hr.mapper.SysConfigMapper">
+    <insert id="addSysConfigType">
+        INSERT INTO sys_config_type (
+          type_code,name,sort_number
+        )VALUES (
+          #{typeCode}, #{name}, #{sortNumber}
+        )
+    </insert>
+    <insert id="addSysConfigValue">
+        INSERT INTO sys_config_value (
+          type_id,param_key,param_value,`describe`,remark
+        )VALUES (
+          #{typeId},#{paramKey},#{paramValue},#{describe},#{remark}
+        )
+    </insert>
+
+    <select id="getAllConfigType" resultType="com.myhr.hr.model.SysConfigTypeDto">
+        SELECT
+        id as id,
+        type_code as typeCode,
+        name as name,
+        deleted as deleted,
+        sort_number as sortNumber
+        FROM sys_config_type
+        WHERE deleted = 0
+    </select>
+
+    <sql id="sql_where">
+        <where>
+            v.deleted = 0 and t.deleted = 0
+            <if test="typeName !=null and typeName!=''">
+                and t.name like CONCAT('%',#{typeName},'%')
+            </if>
+            <if test="typeCode !=null and typeCode!=''">
+                and t.type_code like CONCAT('%',#{typeCode},'%')
+            </if>
+            <if test="paramValue !=null and paramValue!=''">
+                and v.param_value like CONCAT('%',#{paramValue},'%')
+            </if>
+            <if test="typeId !=null ">
+                and v.type_id = #{typeId}
+            </if>
+            <if test="status !=null and status != 0">
+                and v.status = #{status}
+            </if>
+            <if test="ids != null and ids.size()>0">
+                and t.id IN
+                <foreach collection="ids" index="index" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </sql>
+
+    <sql id="sql_order">
+        <if test="sort == null and order == null ">
+            ORDER BY v.type_id asc
+        </if>
+        <if test="sort !=null and order!=null">
+            ORDER BY v.${sort} ${order}
+        </if>
+    </sql>
+
+    <select id="getSysConfigPageCount" resultType="java.lang.Long">
+        SELECT count(1)
+        FROM sys_config_value v
+        LEFT JOIN sys_config_type t on v.type_id = t.id
+        <include refid="sql_where"/>
+
+    </select>
+    <select id="getSysConfigPageList" resultType="com.myhr.hr.model.SysConfigValueDto">
+        SELECT
+        v.id as id,
+        v.type_id as typeId,
+        v.param_key AS paramKey,
+        v.param_value AS paramValue,
+        v.describe,
+        v.remark as remark,
+        v.status as status,
+        t.type_code as typeCode,
+        t.name as typeName
+        FROM sys_config_value v
+        LEFT JOIN sys_config_type t on v.type_id = t.id
+        <include refid="sql_where"/>
+        <include refid="sql_order"/>
+        <if test="page !=null ">
+            limit #{start} , #{rows}
+        </if>
+    </select>
+
+    <update id="updateSysConfigType">
+        UPDATE sys_config_type
+        <set>
+            <if test="typeCode != null and typeCode != ''">
+                type_code = #{typeCode},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="sortNumber != null ">
+                sort_number = #{sortNumber},
+            </if>
+            <if test="deleted != null ">
+                deleted = #{deleted}
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    <update id="updateSysConfigValue">
+        UPDATE sys_config_value
+        <set>
+            <if test="typeId != null and typeId != ''">
+                type_id = #{typeId},
+            </if>
+            <if test="paramKey != null and paramKey != ''">
+                param_key = #{paramKey},
+            </if>
+            <if test="paramValue != null and paramValue != ''">
+                param_value = #{paramValue},
+            </if>
+            <if test="describe != null ">
+                `describe` = #{describe},
+            </if>
+            <if test="remark != null ">
+                `remark` = #{remark},
+            </if>
+            <if test="status != null ">
+                status = #{status},
+            </if>
+            <if test="deleted != null ">
+                deleted = #{deleted}
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    <update id="deleteSysConfigType">
+        UPDATE sys_config_type SET deleted = 1 WHERE id =#{typeId}
+    </update>
+    <update id="deleteSysConfigValueByTypeId">
+        UPDATE sys_config_value SET deleted = 1 WHERE type_id =#{typeId}
+    </update>
+
+    <select id="getAllAreaTreeNode" resultType="com.myhr.hr.vo.TreeNode">
+        SELECT
+        v.param_key as id,
+        v.param_value as name,
+        v.param_value as text,
+        0 as parentId
+		FROM sys_config_type t
+		LEFT JOIN sys_config_value v on t.id = v.type_id
+		WHERE t.type_code = 'OfficeArea' and v.deleted = 0 and t.deleted = 0
+
+    </select>
+
+</mapper>

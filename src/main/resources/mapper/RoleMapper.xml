@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.myhr.hr.mapper.RoleMapper">
+    <sql id="sql_column">
+        r.id id,
+        r.role_code roleCode,
+        r.role_name roleName,
+        r.status status,
+        r.remark remark,
+        r.deleted deleted
+    </sql>
+    <sql id="sql_where">
+        <where>
+            r.deleted = 0
+            <if test="roleCode !=null and roleCode!=''">
+                and r.role_code like CONCAT('%',#{roleCode},'%')
+            </if>
+            <if test="roleName !=null and roleName!=''">
+                and r.role_name like CONCAT('%',#{roleName},'%')
+            </if>
+            <if test="status !=null and status != 0">
+                and r.status = #{status}
+            </if>
+        </where>
+    </sql>
+    <sql id="sql_order">
+        <if test="sort == null and order == null ">
+            ORDER BY r.id asc
+        </if>
+        <if test="sort !=null and order!=null">
+            ORDER BY r.${sort} ${order}
+        </if>
+    </sql>
+    <insert id="addRole">
+        INSERT INTO auth_role (
+            role_code,
+            role_name,
+            status,
+            remark,
+            create_user
+        )VALUES (
+            #{roleCode}, #{roleName}, 1, #{remark}, #{createUser}
+        )
+    </insert>
+
+    <update id="updateRole">
+        UPDATE auth_role
+        <set>
+            update_time = #{updateTime},
+            <if test="roleCode != null and roleCode != ''">
+                role_code = #{roleCode},
+            </if>
+            <if test="roleName != null and roleName != ''">
+                role_name = #{roleName},
+            </if>
+            <if test="remark != null ">
+                `remark` = #{remark},
+            </if>
+            <if test="status != null ">
+                status = #{status},
+            </if>
+            <if test="deleted != null ">
+                deleted = #{deleted},
+            </if>
+            <if test="updateUser != null ">
+                update_user = #{updateUser},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="getRolePageList" resultType="com.myhr.hr.model.RoleDto">
+        SELECT
+        <include refid="sql_column"/>
+        FROM auth_role r
+        <include refid="sql_where"/>
+        <include refid="sql_order"/>
+        <if test="page !=null ">
+            limit #{start} , #{rows}
+        </if>
+    </select>
+    <select id="getRolePageCount" resultType="java.lang.Long">
+        SELECT count(1)
+        FROM auth_role r
+        <include refid="sql_where"/>
+    </select>
+
+</mapper>

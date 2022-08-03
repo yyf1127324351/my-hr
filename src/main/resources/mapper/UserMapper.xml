@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.myhr.hr.mapper.UserMapper">
+
+    <select id="getUserByMap" resultType="com.myhr.hr.vo.UserVo">
+        select
+        u.id as id,
+        u.id as userId,
+        u.user_name as userName,
+        u.login_name as loginName
+        FROM user u
+        WHERE u.login_name = #{loginName}
+    </select>
+</mapper>

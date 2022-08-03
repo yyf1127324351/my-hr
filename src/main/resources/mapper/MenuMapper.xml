@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.myhr.hr.mapper.MenuMapper">
+
+    <sql id="sql_menu_column">
+		m.id,
+		m.name as name,
+		m.code,
+		m.type,
+		m.parent_id as parentId,
+		m.level,
+		m.url,
+		m.has_child as hasChild,
+		m.sort_number as sortNumber,
+		m.deleted
+	</sql>
+	<sql id="sql_where">
+		<where>
+			    m.deleted = 0
+			<if test="name !=null and name!=''">
+				and m.name like CONCAT('%',#{name},'%')
+			</if>
+			<if test="ids != null and ids.size()>0">
+				and m.id IN
+				<foreach collection="ids" index="index" item="item" open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</sql>
+	<insert id="insert">
+		insert into menu (name,code,type,parent_id,level,url,sort_number) values
+		(
+			#{name},#{code},#{type},#{parentId},#{level},#{url},#{sortNumber}
+		)
+
+	</insert>
+	<update id="updateParentMenuHasChildren">
+		UPDATE menu SET has_child = #{hasChild} where id = #{parentId}
+	</update>
+	<update id="update">
+		UPDATE menu
+		<set>
+			url = #{url},
+			<if test="name != null and name != ''">
+				name = #{name},
+			</if>
+			<if test="code != null and code != ''">
+				code = #{code},
+			</if>
+			<if test="parentId != null">
+				parent_id = #{parentId},
+			</if>
+			<if test="level != null">
+				level = #{level},
+			</if>
+			<if test="sortNumber != null">
+				sort_number = #{sortNumber},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	<update id="deleteMenu">
+		<foreach collection="ids" index="index" item="item" open="" close="" separator=";">
+			UPDATE menu SET deleted = 1
+			<where>
+				id = #{item}
+			</where>
+		</foreach>
+	</update>
+
+	<select id="leftLevel1List" resultType="com.myhr.hr.vo.MenuVo">
+		select
+		<include refid="sql_menu_column"/>
+		from menu m where m.deleted = 0 and m.id in (select
+		m2.parent_id
+		from menu m2
+		join menu_user mu on mu.menu_id = m2.id
+		where mu.user_id = #{userId} and m2.type = 0 and m2.`level` = 2 and m2.deleted = 0
+		) order by m.sort_number asc
+	</select>
+    <select id="leftLevel2List" resultType="com.myhr.hr.vo.MenuVo">
+        select
+		<include refid="sql_menu_column"/>
+		from menu m
+		join menu_user mu on mu.menu_id = m.id
+		where mu.user_id = #{userId} and m.type = 0  and m.`level` = 2 and m.deleted = 0
+		order by  m.sort_number asc
+    </select>
+    <select id="getAllMenuTree" resultType="com.myhr.hr.vo.MenuVo">
+        select
+        <include refid="sql_menu_column"/>
+        FROM menu m
+        WHERE m.deleted = 0
+    </select>
+	<select id="getMenuPageList" resultType="com.myhr.hr.vo.MenuVo">
+		select
+		<include refid="sql_menu_column"/>
+		from menu m
+		<include refid="sql_where"/>
+		ORDER BY m.parent_id,m.sort_number
+		<if test="page !=null ">
+			limit #{start} , #{rows}
+		</if>
+
+	</select>
+	<select id="getMenuPageCount" resultType="java.lang.Long">
+		select
+		count(1)
+		from menu m
+		<include refid="sql_where"/>
+	</select>
+	<select id="getMenuByParentId" resultType="com.myhr.hr.model.MenuDto">
+		select
+		<include refid="sql_menu_column"/>
+		from menu m
+		WHERE m.parent_id = #{parentId} and m.deleted = 0
+	</select>
+	<select id="getAllMenuTreeNode" resultType="com.myhr.hr.vo.TreeNode">
+		select
+		<include refid="sql_menu_column"/>
+		FROM menu m
+		WHERE m.deleted = 0
+	</select>
+</mapper>

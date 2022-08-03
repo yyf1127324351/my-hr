@@ -4,9 +4,9 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://10.50.10.48:3306/hr_test3?useUnicode=true&characterEncoding=utf8&useSSL=false&allowMultiQueries=true&serverTimezone=GMT%2B8
+    url: jdbc:mysql://127.0.0.1:3306/black?useUnicode=true&characterEncoding=utf8&useSSL=false&allowMultiQueries=true&serverTimezone=GMT%2B8
     username: root
-    password: richardsun
+    password: root
     type: com.alibaba.druid.pool.DruidDataSource
   redis:
     host: 127.0.0.1

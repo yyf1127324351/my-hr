@@ -2,9 +2,9 @@ package com.myhr.common.interceptor;
 
 import com.myhr.common.SessionContainer;
 import com.myhr.common.constant.RedisConstant;
-import com.myhr.hr.model.Operator;
-import com.myhr.hr.service.OperatorService;
+import com.myhr.hr.service.UserService;
 import com.myhr.hr.service.redis.RedisService;
+import com.myhr.hr.vo.UserVo;
 import com.myhr.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -42,7 +42,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Autowired
     RedisUtil redisUtil;
     @Autowired
-    OperatorService operatorService;
+    UserService userService;
     @Autowired
     private RedisService redisService;
 
@@ -82,16 +82,16 @@ public class LoginInterceptor implements HandlerInterceptor {
             }
         }
 
-        Operator user = (Operator) redisService.getObjectByKey(RedisConstant.LOGIN_NAME_PREFIX + loginName);
+        UserVo user = (UserVo) redisService.getObjectByKey(RedisConstant.LOGIN_NAME_PREFIX + loginName);
         if(user == null) {
-            user = operatorService.getOperatorByMap(Collections.singletonMap("loginName", loginName));
+            user = userService.getUserByMap(Collections.singletonMap("loginName", loginName));
             if(user == null) {
                 redirectOrNotice(request, response);
                 return false;
             }
             redisService.setKey_Obj(RedisConstant.LOGIN_NAME_PREFIX + loginName, user, EXPIRED_SECOND);
 
-            log.info("用户【{}】登入成功！", user.getOperatorName());
+            log.info("用户【{}】登入成功！", user.getUserName());
 
         }
 

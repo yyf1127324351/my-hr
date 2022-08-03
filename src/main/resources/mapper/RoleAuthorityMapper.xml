@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.myhr.hr.mapper.RoleAuthorityMapper">
+    <insert id="addRoleAuthority">
+        insert into auth_role_authority (role_id, auth_id,type,create_time,create_user)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.roleId},#{item.authId},#{item.type},#{item.createTime},#{item.createUser})
+        </foreach>
+    </insert>
+    <delete id="deleteRoleAuthority">
+        <foreach collection="list" item="item" index="index" separator=",">
+            DELETE FROM auth_role_authority where role_id = #{item.roleId} and type = #{item.type} and auth_id = #{item.authId}
+        </foreach>
+    </delete>
+    <select id="getMenuIdsByRoleId" resultType="com.myhr.hr.model.RoleAuthorityDto">
+        select
+        id,
+        role_id roleId,
+        auth_id authId,
+        type type
+        FROM auth_role_authority
+        WHERE deleted = 0 and role_id = #{roleId}
+    </select>
+</mapper>

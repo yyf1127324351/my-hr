@@ -26,7 +26,7 @@ public class LoginController {
     @Value("${cas.client.index}")
     private String casClientIndex;
 
-    @GetMapping("login")
+    @GetMapping(path = {"","login"})
     public ModelAndView login(){
         return new ModelAndView("redirect:" + casClientIndex);
     }

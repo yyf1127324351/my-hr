@@ -1,6 +1,6 @@
 package com.myhr.hr.mapper;
 
-import com.myhr.hr.model.Operator;
+import com.myhr.hr.vo.UserVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -13,9 +13,7 @@ import java.util.Map;
  */
 @Mapper
 @Repository
-public interface  OperatorMapper {
+public interface UserMapper {
 
-    Operator getOperatorById();
-
-    Operator getOperatorByMap(Map<String, String> map);
+    UserVo getUserByMap(Map<String, String> map);
 }
