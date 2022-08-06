@@ -66,10 +66,13 @@ public class UserRoleServiceImpl implements UserRoleService {
         if (CollectionUtils.isNotEmpty(userRoles)) {
             //进行分组
             Map<Long,List<UserRoleDto>> roleMap = userRoles.stream().collect(Collectors.groupingBy(e -> e.getUserId()));
+            //遍历员工 并处理员工的角色
             for (UserRoleDto userRoleDto : list) {
                 List<UserRoleDto> userRoleList = roleMap.get(userRoleDto.getUserId());
                 if (CollectionUtils.isNotEmpty(userRoleList)) {
+                    //将员工对应的所有的 角色名称拼接成字符串
                     String userRoleNames = userRoleList.stream().map(c -> c.getRoleName()).collect(Collectors.joining(","));
+                    //将员工对应的所有的 角色id放置数组，用于前端辉县角色下拉框使用
                     List<Long> userRoleIds = userRoleList.stream().map(e -> e.getRoleId()).collect(Collectors.toList());
                     userRoleDto.setUserRoleNames(userRoleNames);
                     userRoleDto.setRoleIdList(userRoleIds);
