@@ -37,7 +37,7 @@
 <div data-options="region:'north',border:false" class="super-north" style="height: 50px;">
     <!--顶部-->
     <div class="super-navigation">
-        <div class="super-navigation-title" style="text-align: center;">HR系统</div>
+        <div class="super-navigation-title" style="text-align: center;">后台系统</div>
         <div class="super-navigation-main">
             <div class="super-setting-left">
                 <ul>

@@ -324,12 +324,12 @@
                     }
                 },
                 {title: '参数键Key', field: 'paramKey', width: 80, align: 'center'},
-                {title: '参数值Value', field: 'paramValue', width: 220, align: 'center'},
-                {title: '参数类型', field: 'typeName', width: 200, align: 'center'}
+                {title: '参数值Value', field: 'paramValue', width: 160, align: 'center'},
+                {title: '参数类型', field: 'typeName', width: 160, align: 'center'}
 
             ]],
             columns: [[
-                {title: '参数类型编码', field: 'typeCode', width: 200, align: 'center'},
+                {title: '参数类型编码', field: 'typeCode', width: 180, align: 'center'},
                 {title: '参数类型ID', field: 'typeId', width: 100, align: 'center'},
                 {title: '参数描述', field: 'describe', width: 210, align: 'center'},
                 {title: '参数备注', field: 'remark', width: 200, align: 'center'}

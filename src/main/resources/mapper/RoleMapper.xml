@@ -85,5 +85,11 @@
         FROM sys_auth_role r
         <include refid="sql_where"/>
     </select>
+    <select id="getRoleList" resultType="com.myhr.hr.model.RoleDto">
+        SELECT
+        <include refid="sql_column"/>
+        FROM sys_auth_role r
+        WHERE r.deleted = 0 and r.status = 1
+    </select>
 
 </mapper>

@@ -19,4 +19,37 @@
         FROM user u
         WHERE u.id = #{userId}
     </select>
+    
+    
+    <sql id="sql_where_UserAccount">
+        <where>
+            <if test="userId != null ">
+                and u.id = #{userId}
+            </if>
+            <if test="userName != null and userName != ''">
+                and u.user_name like CONCAT('%', #{userName}, '%')
+            </if>
+            <if test="loginName != null and loginName != ''">
+                and u.login_name like  CONCAT('%', #{loginName}, '%')
+            </if>
+            and u.status = 1
+        </where>
+    </sql>
+    <select id="getUserAccountPageCount" resultType="java.lang.Long">
+        select
+        count(1)
+        from user u
+        <include refid="sql_where_UserAccount"/>
+    </select>
+    <select id="getUserAccountPageList" resultType="com.myhr.hr.model.UserRoleDto">
+        select
+        u.id as userId,
+        u.user_name as userName,
+        u.login_name as loginName
+        FROM user u
+        <include refid="sql_where_UserAccount"/>
+        <if test="page !=null ">
+            limit #{start} , #{rows}
+        </if>
+    </select>
 </mapper>

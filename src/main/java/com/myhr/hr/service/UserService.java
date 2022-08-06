@@ -9,4 +9,5 @@ public interface UserService {
     UserVo getUserByMap(Map<String, String> loginName);
 
     UserDto queryUserById(Long userId);
+
 }

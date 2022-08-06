@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.myhr.hr.mapper.UserRoleMapper">
+    <insert id="insertBatchUserRole">
+        insert into sys_auth_user_role
+        (user_id,role_id,create_time,create_user)
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.userId}, #{item.roleId}, #{item.createTime}, #{item.createUser}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deletedUserRoleByUserId">
+        update sys_auth_user_role set deleted = 1 where user_id = #{userId}
+    </delete>
+    <select id="getRoleByUserId" resultType="com.myhr.hr.model.UserRoleDto">
+        select
+        r.id,
+        r.user_id as userId,
+        r.role_id as roleId,
+        o.role_name as roleName
+        from sys_auth_user_role r
+        left JOIN sys_auth_role o on r.role_id = o.id
+        where r.user_id in
+        <foreach collection="userIds" index="index" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        and r.deleted = 0
+
+    </select>
+</mapper>

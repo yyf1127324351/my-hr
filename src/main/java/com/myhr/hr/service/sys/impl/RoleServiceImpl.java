@@ -75,7 +75,7 @@ public class RoleServiceImpl implements RoleService {
         List<RoleAuthorityDto> areaAuthList = allAuthIds.stream().filter(e -> e.getType() == 3).collect(Collectors.toList());
         List<Long> areaIds = areaAuthList.stream().map(RoleAuthorityDto::getAuthId).collect(Collectors.toList());
         TreeNode.isChecked(allAreaList, areaIds);
-        //插入所有部门root节点
+        //插入所有地区root节点
         TreeNode rootArea = new TreeNode(0L, "所有地区");
         int checkedCount = (int) allAreaList.stream().filter(TreeNode::getChecked).count();
         //如果权限是所有地区，则选中父节点
@@ -130,6 +130,11 @@ public class RoleServiceImpl implements RoleService {
 
 
 
+    }
+
+    @Override
+    public List<RoleDto> getRoleList() {
+        return roleMapper.getRoleList();
     }
 
     private void handleAddList(Long authId, int type, Long roleId, List<RoleAuthorityDto> addList) {

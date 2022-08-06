@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,5 +118,20 @@ public class RoleController extends BaseController {
     }
 
 
+
+    /**
+     * 获取所有角色
+     */
+    @RequestMapping(value = "/getRoleList")
+    @ResponseBody
+    public List<RoleDto> getRoleList() {
+        try {
+            return roleService.getRoleList();
+        } catch (Exception e) {
+            log.error("getRoleListException" + e.getMessage(), e);
+            return Collections.emptyList();
+        }
+
+    }
 
 }

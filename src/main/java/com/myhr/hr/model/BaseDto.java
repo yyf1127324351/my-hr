@@ -2,13 +2,13 @@ package com.myhr.hr.model;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class BaseDto {
+public class BaseDto implements Serializable {
 
     /*数据库表基本字段*/
-    private Integer status;
     private String remark;
     private Integer deleted;
     private Long createUser;

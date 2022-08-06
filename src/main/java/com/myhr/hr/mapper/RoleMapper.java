@@ -16,4 +16,6 @@ public interface RoleMapper {
     void updateRole(RoleDto roleDto);
 
     void addRole(RoleDto roleDto);
+
+    List<RoleDto> getRoleList();
 }

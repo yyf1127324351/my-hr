@@ -18,4 +18,6 @@ public interface RoleService {
     Map<String,List> getAuthTree(Long roleId);
 
     void saveAuthTree(RoleAuthorityDto roleAuthorityDto);
+
+    List<RoleDto> getRoleList();
 }
