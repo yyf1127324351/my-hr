@@ -18,4 +18,5 @@ public interface MenuService {
     BaseResponse addUpdateMenu(MenuVo menuVo);
 
     BaseResponse deleteMenu(MenuVo menuVo);
+
 }

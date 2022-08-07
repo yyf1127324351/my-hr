@@ -34,4 +34,5 @@ public interface MenuMapper {
     void deleteMenu(MenuVo menuVo);
 
     List<TreeNode> getAllMenuTreeNode();
+
 }

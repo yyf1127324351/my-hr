@@ -10,8 +10,9 @@
         </foreach>
     </insert>
     <delete id="deleteRoleAuthority">
-        <foreach collection="list" item="item" index="index" separator=",">
-            DELETE FROM sys_auth_role_authority where role_id = #{item.roleId} and type = #{item.type} and auth_id = #{item.authId}
+        DELETE FROM sys_auth_role_authority where id in
+        <foreach collection="ids" index="index" item="item" open="(" close=")" separator=",">
+            #{item}
         </foreach>
     </delete>
     <select id="getMenuIdsByRoleId" resultType="com.myhr.hr.model.RoleAuthorityDto">
@@ -22,5 +23,17 @@
         type type
         FROM sys_auth_role_authority
         WHERE deleted = 0 and role_id = #{roleId}
+    </select>
+    <select id="getRoleAuthorityIdList" resultType="java.lang.Long">
+        SELECT
+            id
+        FROM sys_auth_role_authority
+        WHERE role_id = #{roleId}
+        and auth_id in
+        <foreach collection="authIds" index="index" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        and type = #{roleAuthorityType}
+        and deleted = 0
     </select>
 </mapper>

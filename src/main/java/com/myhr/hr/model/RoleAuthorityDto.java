@@ -16,5 +16,7 @@ public class RoleAuthorityDto extends BaseDto{
     private List<Long> areaAuthAdd;
     private List<Long> areaAuthDelete;
 
+    private List<Long> ids;
+
 
 }

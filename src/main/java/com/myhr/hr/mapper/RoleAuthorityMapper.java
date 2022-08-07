@@ -13,5 +13,7 @@ public interface RoleAuthorityMapper {
 
     void addRoleAuthority(@Param("list") List<RoleAuthorityDto> list);
 
-    void deleteRoleAuthority(@Param("list") List<RoleAuthorityDto> list);
+    int deleteRoleAuthority(@Param("ids") List<Long> ids);
+
+    List<Long> getRoleAuthorityIdList(@Param("roleId") Long roleId, @Param("authIds") List<Long> authIds, @Param("roleAuthorityType") Integer roleAuthorityType);
 }

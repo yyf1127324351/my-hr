@@ -36,6 +36,8 @@ public class IndexController {
         ModelAndView mv=new ModelAndView("index");//模板文件的名称，不需要指定后缀
         mv.addObject("userName", SessionContainer.getUserName());
         mv.addObject("userId", SessionContainer.getUserName());
+        //根据登陆人id获取其有权限的菜单列表
+//        List<MenuVo> menuList = menuService. getUserMenuList(SessionContainer.getUserId());
 
         // 顶级菜单权限控制
         List<MenuVo> level1List = menuService.leftLevel1List();

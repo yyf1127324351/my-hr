@@ -2,6 +2,7 @@ package com.myhr.hr.service.sys.impl;
 
 import com.myhr.common.BaseResponse;
 import com.myhr.common.SessionContainer;
+import com.myhr.common.constant.CommonConstant;
 import com.myhr.hr.mapper.MenuMapper;
 import com.myhr.hr.mapper.RoleAuthorityMapper;
 import com.myhr.hr.mapper.RoleMapper;
@@ -96,7 +97,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public void saveAuthTree(RoleAuthorityDto roleAuthorityDto) {
         List<RoleAuthorityDto> addList = new ArrayList<>();
-        List<RoleAuthorityDto> deleteList = new ArrayList<>();
+        List<Long> deleteRoleAuthorityIds = new ArrayList<>();
         Long roleId = roleAuthorityDto.getRoleId();
 
         //处理菜单权限
@@ -105,8 +106,9 @@ public class RoleServiceImpl implements RoleService {
             roleAuthorityDto.getMenuAuthAdd().forEach(authId -> handleAddList(authId,1,roleId,addList));
         }
         if (CollectionUtils.isNotEmpty(roleAuthorityDto.getMenuAuthDelete())) {
-            //删除去掉的权限
-            roleAuthorityDto.getMenuAuthDelete().forEach(authId -> handleDeleteList(authId, 1, roleId, deleteList));
+            //查出对应要删除的 角色权限表的id
+            List<Long> ids = roleAuthorityMapper.getRoleAuthorityIdList(roleId,roleAuthorityDto.getMenuAuthDelete(), CommonConstant.ROLE_AUTHORITY_TYPE_MENU);
+            deleteRoleAuthorityIds.addAll(ids);
         }
 
         //处理地区权限
@@ -115,20 +117,17 @@ public class RoleServiceImpl implements RoleService {
             roleAuthorityDto.getAreaAuthAdd().forEach(authId -> handleAddList(authId, 3, roleId, addList));
         }
         if (CollectionUtils.isNotEmpty(roleAuthorityDto.getAreaAuthDelete())) {
-            //删除去掉的权限
-            roleAuthorityDto.getAreaAuthDelete().forEach(authId -> handleDeleteList(authId, 3, roleId, deleteList));
+            //查出对应要删除的 角色权限表的id
+            List<Long> ids = roleAuthorityMapper.getRoleAuthorityIdList(roleId,roleAuthorityDto.getAreaAuthDelete(), CommonConstant.ROLE_AUTHORITY_TYPE_AREA);
+            deleteRoleAuthorityIds.addAll(ids);
         }
 
         if (CollectionUtils.isNotEmpty(addList)) {
             roleAuthorityMapper.addRoleAuthority(addList);
         }
-        if (CollectionUtils.isNotEmpty(deleteList)) {
-            roleAuthorityMapper.deleteRoleAuthority(deleteList);
+        if (CollectionUtils.isNotEmpty(deleteRoleAuthorityIds)) {
+            roleAuthorityMapper.deleteRoleAuthority(deleteRoleAuthorityIds);
         }
-        //查出拥有该角色的所有的用户
-
-
-
 
     }
 

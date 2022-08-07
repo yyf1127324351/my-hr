@@ -73,19 +73,28 @@
 	<select id="leftLevel1List" resultType="com.myhr.hr.vo.MenuVo">
 		select
 		<include refid="sql_menu_column"/>
-		from sys_menu m where m.deleted = 0 and m.id in (select
-		m2.parent_id
-		from sys_menu m2
-		join sys_menu_user mu on mu.menu_id = m2.id
-		where mu.user_id = #{userId} and m2.type = 0 and m2.`level` = 2 and m2.deleted = 0
+		from sys_menu m where m.deleted = 0 and m.id in
+		(	select
+			m2.parent_id
+			from sys_auth_user_role r
+			LEFT JOIN sys_auth_role_authority a on r.role_id = a.role_id
+			LEFT JOIN sys_menu m2 on a.auth_id = m2.id
+			WHERE r.user_id = #{userId}  and a.type = 1 and m2.level = 2 and m2.type = 0
+			and r.deleted = 0
+			and a.deleted = 0
+			and m2.deleted = 0
 		) order by m.sort_number asc
 	</select>
     <select id="leftLevel2List" resultType="com.myhr.hr.vo.MenuVo">
         select
 		<include refid="sql_menu_column"/>
-		from sys_menu m
-		join sys_menu_user mu on mu.menu_id = m.id
-		where mu.user_id = #{userId} and m.type = 0  and m.`level` = 2 and m.deleted = 0
+		from sys_auth_user_role r
+		LEFT JOIN sys_auth_role_authority a on r.role_id = a.role_id
+		LEFT JOIN sys_menu m on a.auth_id = m.id
+		WHERE r.user_id = #{userId}  and a.type = 1 and m.level = 2 and m.type = 0
+		and r.deleted = 0
+		and a.deleted = 0
+		and m.deleted = 0
 		order by  m.sort_number asc
     </select>
     <select id="getAllMenuTree" resultType="com.myhr.hr.vo.MenuVo">

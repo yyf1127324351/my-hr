@@ -10,9 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
 
@@ -29,11 +30,11 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public List<MenuVo> leftLevel1List() {
         //查出一级菜单
-        List<MenuVo> left = menuMapper.leftLevel1List(SessionContainer.getUserId());
+        List<MenuVo> menuList = menuMapper.leftLevel1List(SessionContainer.getUserId());
         // 转化成easyui tree需要的树形数据
-        List<MenuVo> treeList = MenuVo.convertToTreeDataByParentId(left);
-        this.sortMenuList(treeList);
-        return treeList;
+//        List<MenuVo> treeList = MenuVo.convertToTreeDataByParentId(left);
+        this.sortMenuList(menuList);
+        return menuList;
     }
 
     @Override
@@ -41,9 +42,9 @@ public class MenuServiceImpl implements MenuService {
         //查出二级菜单
         List<MenuVo> left = menuMapper.leftLevel2List(SessionContainer.getUserId());
         // 转化成easyui tree需要的树形数据
-        List<MenuVo> treeList = MenuVo.convertToTreeDataByParentId(left);
-        this.sortMenuList(treeList);
-        return treeList;
+//        List<MenuVo> treeList = MenuVo.convertToTreeDataByParentId(left);
+        this.sortMenuList(left);
+        return left;
     }
 
     @Override
@@ -64,32 +65,6 @@ public class MenuServiceImpl implements MenuService {
             list.add(menuVo);
         }
         return list;
-
-
-
-//        List<TreeNode> nodeList = new ArrayList<>();
-//        menuList.forEach(e -> {
-//            TreeNode node = new TreeNode();
-//            node.setId(e.getId());
-//            node.setText(e.getName());
-//            node.setParentId(e.getParentId());
-//            node.setLevel(node.getLevel());
-//            node.setHasChild(e.getHasChild());
-//            nodeList.add(node);
-//        });
-//        //转成所有1级菜单树
-//        List<TreeNode> treeNodeList = TreeNode.convertToTreeList(nodeList);
-//
-//        TreeNode rootTreeNode = new TreeNode();
-//        rootTreeNode.setId(0);
-//        rootTreeNode.setState("close");
-//        rootTreeNode.setText("菜单");
-//        rootTreeNode.setHasChild(1);
-//        rootTreeNode.setChildren(treeNodeList);
-//
-//        List<TreeNode> list = new ArrayList<>();
-//        list.add(rootTreeNode);
-
 
     }
 
