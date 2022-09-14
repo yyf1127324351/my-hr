@@ -5,6 +5,9 @@
     <meta charset="utf-8">
     <title>角色管理页面</title>
 
+    <style type="text/css">
+        .tree-wrapper ul { margin-left: 10px; }
+    </style>
     <#include "/common/common.ftl"/>
 </head>
 <body class="easyui-layout">
@@ -68,8 +71,25 @@
 </div>
 <div id="win"></div>
 
+<div style="display:none">
+    <div id="field-dialog" class='dialog'>
+        <div style='width:200px;float:left;'>
+            <div style='color:red;margin-top: 10px; margin-left: 10px;font-weight:bold;'>1.人员信息列表属性权限</div>
+            <div class="tree-wrapper" id="user-tree-wrapper">
+            </div>
+        </div>
+        <div style='width:200px;float:left;'>
+            <div style='color:red;margin-top: 10px; margin-left: 10px;font-weight:bold;'>2.薪资列表属性权限</div>
+            <div class="tree-wrapper" id="salary-tree-wrapper">
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script type="text/javascript">
     var roleAuth = {};
+    var roleField = {};
 
     $(document).ready(function () {
         document.onkeydown = function (e) {
@@ -125,7 +145,7 @@
             onLoadSuccess: function (data) {
             },
             frozenColumns: [[
-                {title: '操作', field: 'id', width: 180, align: 'center',
+                {title: '操作', field: 'id', width: 300, align: 'center',
                     formatter: function (val, row) {
                         var html = "";
                         var status = row.status;
@@ -133,7 +153,8 @@
                         if (status == 1){
                             html = html + '<a class="sel_btn ch_cls" href="javascript:offUseRole(' + id + ')" style="text-decoration:none;">停用</a>&nbsp;';
                             html = html + '<a class="sel_btn ch_cls" href="javascript:editInfo(' + id + ')" style="text-decoration:none;">编辑</a>&nbsp;';
-                            html = html + '<a class="sel_btn ch_cls" href="javascript:authEdit(' + id + ')" style="text-decoration:none;">分配权限</a>';
+                            html = html + '<a class="sel_btn ch_cls" href="javascript:authEdit(' + id + ')" style="text-decoration:none;">分配权限</a>&nbsp;';
+                            html = html + '<a class="sel_btn ch_cls" href="javascript:authFieldEdit(' + id + ')" style="text-decoration:none;">分配列属性权限</a>';
                         }else {
                             html = html + '<a class="sel_btn ch_cls" href="javascript:onUseRole(' + id + ')" style="text-decoration:none;">启用</a>';
                         }
@@ -160,6 +181,91 @@
             ]]
 
 
+        });
+
+        $("#field-dialog").dialog({
+            title:'角色列属性权限编辑',
+            width:'70%',
+            height:'80%',
+            top: '5%',
+            iconCls:'fa fa-edit',
+            shadow: false,
+            modal: true,
+            buttons:[{
+                text:'保存',
+                iconCls:'icon-ok',
+                handler:function(){
+
+
+                    //人员信息列表属性权限
+                    roleField.userAfter = _.pluck($('#user_manage_tree').tree('getChecked'), 'id');
+                    if(_.contains(roleField.userAfter, 0)) {
+                        //如果全选了，则去掉根节点
+                        roleField.userAfter.splice(0,1);
+                    }
+                    var userAdd = _.difference(roleField.userAfter, roleField.userBefore); //需要新增的
+                    var userDeduct = _.difference(roleField.userBefore, roleField.userAfter);//需要去掉的
+
+                    //薪资列表属性权限
+                    roleField.salaryItemAfter = _.pluck($('#salary_manage_tree').tree('getChecked'), 'id');
+                    if(_.contains(roleField.salaryItemAfter, 0)) {
+                        //如果全选了，则去掉根节点
+                        roleField.salaryItemAfter.splice(0,1);
+                    }
+                    var salaryItemAdd = _.difference(roleField.salaryItemAfter, roleField.salaryItemBefore); //需要新增的
+                    var salaryItemDeduct = _.difference(roleField.salaryItemBefore, roleField.salaryItemAfter);//需要去掉的
+
+                    //判断如果勾选项没有调整，则提示
+                    if(   _.isEqual(roleField.userAfter, roleField.userBefore)
+                            &&_.isEqual(roleField.salaryItemAfter,roleField.salaryItemBefore)
+                    ){
+                        layer.alert('没有修改的内容! ', {icon: 0});
+                        return false;
+                    }
+                    //定义需要新增，删除的 列属性数组
+                    var addArray = userAdd.concat(salaryItemAdd);
+                    var deductArray = userDeduct.concat(salaryItemDeduct);
+                    var param = {
+                        roleId: $("#field-dialog").data("id"),
+                        addArray: addArray,
+                        deductArray: deductArray
+                    };
+                    //设置阴影
+                    var index = layer.load(0, { shade : [ 0.2, '#000' ] });
+                    $.post('/role/updateAuthRoleField', $.param(param, true)).done(
+                        function(result) {
+                            if (result.code == 200) {
+                                layer.alert('分配列属性权限成功！', {icon: 1});
+                                roleField = {};
+                                //关闭窗口
+                                $('#field-dialog').dialog('close');
+                            } else {
+                                layer.alert('请求错误: ' + result.message, {icon: 5});
+                                console.log(result.data);
+                            }
+                        }
+                    ).fail(function() {
+                            layer.alert('请求失败！', {icon: 5});
+                        }
+                    ).always(function() {
+                            layer.close(index);
+                        }
+                    );
+                }
+            },{
+                text:'取消',
+                iconCls:'icon-cancel',
+                handler:function() {
+                    $("#field-dialog").dialog('close');
+                }
+            }],
+            onClose:function() {
+                $("#field-dialog").removeData("id");
+                $("#user-tree-wrapper").html('');
+                $("#change-tree-wrapper").html('');
+            },
+            closable: true,
+            closed: true   //已关闭
         });
 
     });
@@ -272,15 +378,15 @@
     function authEdit(id) {
         $("#win").append("<div id='new_win' class='easyui-dialog'>" +
                 "<div style='width:250px;float:left;'>" +
-                "<div style='color:red;margin-top: 10px; margin-left: 10px;font-weight:bold;'>1、菜单权限</div>" +
+                "<div style='color:red;margin-top: 10px; margin-left: 10px;font-weight:bold;'>1.菜单权限</div>" +
                 "<ul id='menu_manage_tree' class='easyui-tree' style='margin-left: 10px;'></ul>" +
                 "</div>" +
                 "<div style='width:250px;float:left;'>" +
-                "<div style='color:red;margin-top: 10px; margin-left: 10px;font-weight:bold;'>2、部门权限</div>" +
+                "<div style='color:red;margin-top: 10px; margin-left: 10px;font-weight:bold;'>2.部门权限</div>" +
                 "<ul id='dept_manage_tree' class='easyui-tree' style='margin-left: 10px;'></ul>" +
                 "</div>" +
                 "<div style='width:250px;float:left;'>" +
-                "<div style='color:red;margin-top: 10px; margin-left: 10px;font-weight:bold;'>3、区域权限</div>" +
+                "<div style='color:red;margin-top: 10px; margin-left: 10px;font-weight:bold;'>3.区域权限</div>" +
                 "<ul id='area_manage_tree' class='easyui-tree' style='margin-left: 10px;'></ul>" +
                 "</div>" +
                 "</div>");// 创建一个临时层，关闭销毁。
@@ -335,7 +441,7 @@
                         checkbox: true,
                         lines: true,
                         onLoadSuccess: function(node, data) {
-                            cleatTreeIcon();
+                            clearTreeIcon();
                             var nodes = $(this).tree('getChecked');
                             roleAuth.menuAuthBefore = _.pluck(nodes, 'id');
                         },
@@ -351,7 +457,7 @@
                         checkbox: true,
                         lines: true,
                         onLoadSuccess: function (node, data) {
-                            cleatTreeIcon();
+                            clearTreeIcon();
                             var nodes = $(this).tree('getChecked');
                             roleAuth.areaAuthBefore = _.pluck(nodes, 'id');
                         },
@@ -390,7 +496,6 @@
     }
 
     function saveAuthTree(id) {
-        debugger;
         //菜单
         roleAuth.menuAuthAfter = _.pluck($('#menu_manage_tree').tree('getChecked'), 'id');
         var menuAuthAdd = _.difference(roleAuth.menuAuthAfter, roleAuth.menuAuthBefore);
@@ -443,6 +548,62 @@
     }
 
 
+    function authFieldEdit(id) {
+        $.ajax({
+            type : "POST",
+            url : '/role/getRoleField',
+            data : {"roleId":id},
+            dataType: "json",
+            success: function (ret) {
+                if (ret.code == 200) {
+                    $("#user-tree-wrapper").append('<ul id="user_manage_tree"></ul>');
+                    $("#salary-tree-wrapper").append('<ul id="salary_manage_tree"></ul>');
+
+                    //人员信息列属性
+                    $('#user_manage_tree').tree({
+                        data: ret.data.userTreeData,
+                        animate: true,
+                        cascadeCheck:true,
+                        checkbox: true,
+                        lines: true,
+                        onLoadSuccess: function(node, data) {
+                            clearTreeIcon();
+                            var nodes = $(this).tree('getChecked');
+                            roleField.userBefore = _.pluck(nodes, 'id');
+                            if(_.contains(roleField.userBefore, 0)) {
+                                //如果全选了，则去掉根节点
+                                roleField.userBefore.splice(0,1);
+                            }
+                        }
+                    });
+
+                    //薪资列属性
+                    $('#salary_manage_tree').tree({
+                        data: ret.data.salaryItemTreeData,
+                        animate: true,
+                        cascadeCheck: true,
+                        checkbox: true,
+                        lines: true,
+                        onLoadSuccess: function(node, data) {
+                            clearTreeIcon();
+                            var nodes = $(this).tree('getChecked');
+                            roleField.salaryItemBefore = _.pluck(nodes, 'id');
+                            if(_.contains(roleField.salaryItemBefore, 0)) {
+                                //如果全选了，则去掉根节点
+                                roleField.salaryItemBefore.splice(0,1);
+                            }
+                        }
+                    });
+
+                    $("#field-dialog").data("id", id);
+                    $("#field-dialog").dialog("open");
+                }else {
+                    layer.alert('请求错误: ' + data.msg , {icon: 5});
+                }
+            }
+        });
+    }
+
 
     function getFormData(form) {
         var array = $("#" + form).serializeArray();
@@ -458,7 +619,7 @@
         return data;
     }
 
-    function cleatTreeIcon(){
+    function clearTreeIcon(){
         $(".tree-icon,.tree-file").removeClass("tree-icon tree-file");
         $(".tree-icon,.tree-folder").removeClass("tree-icon tree-folder tree-folder-open tree-folder-closed");
     }

@@ -1,7 +1,7 @@
 package com.myhr.hr.controller.systemManage;
 
 import com.myhr.common.BaseResponse;
-import com.myhr.hr.service.sys.MenuService;
+import com.myhr.hr.service.systemManage.MenuService;
 import com.myhr.hr.vo.MenuVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

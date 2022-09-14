@@ -2,9 +2,9 @@ package com.myhr.hr.controller.systemManage;
 
 import com.myhr.common.BaseResponse;
 import com.myhr.common.SessionContainer;
-import com.myhr.hr.controller.BaseController;
+import com.myhr.hr.controller.common.BaseController;
 import com.myhr.hr.model.UserRoleDto;
-import com.myhr.hr.service.sys.UserRoleService;
+import com.myhr.hr.service.systemManage.UserRoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

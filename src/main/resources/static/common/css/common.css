@@ -13,7 +13,7 @@
 .ch_cls {
     background: #3498db;
 }
-.search-label { display: inline-block; min-width: 60px; text-align: right; font-weight: bold; padding-left: 5px; }
+.search-label { display: inline-block; min-width: 0px; text-align: right; font-weight: bold; padding-left: 5px; }
 .search-row { margin: 2px 0; }
 .search-row .form-group { display: inline-block; }
 .search-row .form-group.form-checkbox { width: 228px; text-align: right; user-select: none; }

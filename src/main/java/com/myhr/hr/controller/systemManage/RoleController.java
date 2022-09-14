@@ -1,15 +1,18 @@
 package com.myhr.hr.controller.systemManage;
 
 import com.myhr.common.BaseResponse;
-import com.myhr.hr.controller.BaseController;
+import com.myhr.common.SessionContainer;
+import com.myhr.hr.controller.common.BaseController;
+import com.myhr.hr.model.AuthRoleFieldDto;
 import com.myhr.hr.model.RoleAuthorityDto;
 import com.myhr.hr.model.RoleDto;
-import com.myhr.hr.service.sys.RoleService;
+import com.myhr.hr.service.systemManage.RoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -84,7 +87,7 @@ public class RoleController extends BaseController {
     }
 
     /**
-     * 获取所有的权限树
+     * 角色管理-分配权限（获取角色对应的权限）
      */
     @RequestMapping(value = "/getAuthTree", method = RequestMethod.POST)
     @ResponseBody
@@ -101,7 +104,7 @@ public class RoleController extends BaseController {
     }
 
     /**
-     * 更新角色对应的权限
+     * 角色管理-分配权限（更新角色对应的权限）
      */
     @RequestMapping(value = "/saveAuthTree", method = RequestMethod.POST)
     @ResponseBody
@@ -115,6 +118,37 @@ public class RoleController extends BaseController {
             return BaseResponse.error();
         }
 
+    }
+
+
+    /**
+     * 角色管理-分配列属性权限（获取角色对应的列属性权限）
+     */
+    @RequestMapping("/getRoleField")
+    @ResponseBody
+    private BaseResponse getRoleField(@RequestParam("roleId") Long roleId){
+        try {
+            return roleService.getRoleField(roleId);
+        } catch (Exception e) {
+            log.error("getRoleFieldException:" + e.getMessage(), e);
+            return BaseResponse.error();
+        }
+    }
+
+    /**
+     * 角色管理-分配列属性权限（更新角色对应的列属性权限）
+     */
+    @RequestMapping("/updateAuthRoleField")
+    @ResponseBody
+    private BaseResponse updateAuthRoleField(AuthRoleFieldDto authRoleFieldDto){
+
+        try {
+            Long updateUser = SessionContainer.getUserId();
+            return roleService.updateAuthRoleField(authRoleFieldDto,updateUser);
+        } catch (Exception e) {
+            log.error("updateAuthRoleFieldException:" + e.getMessage(), e);
+            return BaseResponse.error("updateAuthRoleFieldError");
+        }
     }
 
 

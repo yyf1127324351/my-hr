@@ -373,7 +373,6 @@
     }
 
     function saveAuthTree(id) {
-        debugger;
         //菜单
         roleAuth.menuAuthAfter = _.pluck($('#menu_manage_tree').tree('getChecked'), 'id');
         var menuAuthAdd = _.difference(roleAuth.menuAuthAfter, roleAuth.menuAuthBefore);

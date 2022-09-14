@@ -1,23 +1,21 @@
-package com.myhr.hr.service.sys.impl;
+package com.myhr.hr.service.systemManage.impl;
 
 import com.myhr.common.BaseResponse;
 import com.myhr.common.SessionContainer;
 import com.myhr.common.constant.CommonConstant;
-import com.myhr.hr.mapper.MenuMapper;
-import com.myhr.hr.mapper.RoleAuthorityMapper;
-import com.myhr.hr.mapper.RoleMapper;
-import com.myhr.hr.mapper.SysConfigMapper;
-import com.myhr.hr.model.RoleAuthorityDto;
-import com.myhr.hr.model.RoleDto;
-import com.myhr.hr.service.sys.RoleService;
+import com.myhr.hr.mapper.*;
+import com.myhr.hr.model.*;
+import com.myhr.hr.service.systemManage.RoleService;
 import com.myhr.hr.vo.TreeNode;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class RoleServiceImpl implements RoleService {
 
@@ -29,6 +27,8 @@ public class RoleServiceImpl implements RoleService {
     RoleAuthorityMapper roleAuthorityMapper;
     @Autowired
     SysConfigMapper sysConfigMapper;
+    @Autowired
+    ColumnFieldMapper columnFieldMapper;
 
     @Override
     public BaseResponse getRolePageList(HashMap<String, Object> map) {
@@ -134,6 +134,106 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public List<RoleDto> getRoleList() {
         return roleMapper.getRoleList();
+    }
+
+    @Override
+    public BaseResponse getRoleField(Long roleId) {
+        //获取所有的列属性类型 查询sys_column_field_type表
+        Map<String,Object> paramMap = new HashMap();
+        List<ColumnFieldTypeDto> filedTypeList = columnFieldMapper.queryAllColumnFiledType(null);
+        if (CollectionUtils.isEmpty(filedTypeList)) {
+            return BaseResponse.paramError("无列属性类型");
+        }
+        //查询出所有的列属性字段
+        List<ColumnFieldDto> columnFieldList = columnFieldMapper.queryAllColumnFiled(paramMap);
+        if (CollectionUtils.isEmpty(columnFieldList)) {
+            return BaseResponse.paramError("无列属性字段");
+        }
+        //对所有列属性进行分组
+        Map<Integer, List<ColumnFieldDto>> columnFieldMap = columnFieldList.stream().collect((Collectors.groupingBy(e -> e.getFieldType())));
+
+        //查出该角色权限下的所有的列属性字段
+        paramMap.put("roleId", roleId);
+        List<ColumnFieldDto> roleColumnFieldList = roleMapper.queryRoleColumnFiled(paramMap);
+        Map<Integer, List<ColumnFieldDto>> roleHasColumnFieldMap = roleColumnFieldList.stream().collect((Collectors.groupingBy(e -> e.getFieldType())));
+
+        //返回的的TreeMap
+        Map<String, List<TreeNode>> map = new HashMap<>();
+
+        //将对应的列属性关联到列属性类型
+        for (ColumnFieldTypeDto fieldTypeDto : filedTypeList) {
+            //该属性类型 所有的属性
+            List<ColumnFieldDto> fieldDtos = columnFieldMap.get(fieldTypeDto.getId());
+            if (CollectionUtils.isNotEmpty(fieldDtos)) {
+                fieldTypeDto.setFieldList(fieldDtos);
+            }
+            //该属性类型，该角色拥有的属性
+            List<Long> roleHasFieldIds = new ArrayList<>();
+            if (CollectionUtils.isNotEmpty(roleHasColumnFieldMap.get(fieldTypeDto.getId()))) {
+                roleHasFieldIds = roleHasColumnFieldMap.get(fieldTypeDto.getId()).stream().map(ColumnFieldDto::getId).collect(Collectors.toList());
+            }
+
+            //将改权限下的 列属性权限 处理成树格式
+            handleRoleColumnFieldTree(map,fieldTypeDto,fieldDtos,roleHasFieldIds);
+        }
+
+        return BaseResponse.success(map);
+    }
+
+    @Override
+    public BaseResponse updateAuthRoleField(AuthRoleFieldDto authRoleFieldDto, Long updateUser) {
+        if (CollectionUtils.isNotEmpty(authRoleFieldDto.getAddArray())) {
+            //如果新增的不为空，则新增
+            authRoleFieldDto.setCreateUser(updateUser);
+            authRoleFieldDto.setCreateTime(new Date());
+            roleMapper.insertBatchAuthRoleField(authRoleFieldDto);
+        }
+
+        if (CollectionUtils.isNotEmpty(authRoleFieldDto.getDeductArray())) {
+            //如果需要删除的不为空，则删除
+            authRoleFieldDto.setUpdateUser(updateUser);
+            authRoleFieldDto.setUpdateTime(new Date());
+            roleMapper.updateBatchAuthRoleField(authRoleFieldDto);
+        }
+
+        return BaseResponse.success();
+    }
+
+    /**
+     * @param treeData 需要处理成的数结构
+     * @param fieldTypeDto 列属性类型
+     * @param fieldDtos 该列属性类型下的列属性
+     * @param roleHasFieldIds 角色拥有的列属性Id
+     * */
+    private void handleRoleColumnFieldTree(Map<String, List<TreeNode>> treeData, ColumnFieldTypeDto fieldTypeDto, List<ColumnFieldDto> fieldDtos, List<Long> roleHasFieldIds) {
+
+        TreeNode rootTreeNode = new TreeNode();
+        rootTreeNode.setId(0L);
+        rootTreeNode.setName(fieldTypeDto.getFieldTypeName());
+        rootTreeNode.setText(fieldTypeDto.getFieldTypeName());
+        rootTreeNode.setCode(fieldTypeDto.getFieldCode());
+        //如果该角色拥有的列属性个数等于该属性类型下的列属性个数，则树置位全选状态
+        if (CollectionUtils.isNotEmpty(roleHasFieldIds) && roleHasFieldIds.size() == fieldDtos.size()) {
+            rootTreeNode.setChecked(true);
+        }
+        //循环处理子节点
+        List<TreeNode> childrenTreeNode = new ArrayList<>();
+        for (ColumnFieldDto field : fieldDtos) {
+            TreeNode treeNode = new TreeNode();
+            treeNode.setId(field.getId());
+            treeNode.setName(field.getName());
+            treeNode.setText(field.getName());
+            if (CollectionUtils.isNotEmpty(roleHasFieldIds) && roleHasFieldIds.contains(field.getId())) {
+                treeNode.setChecked(true);
+            }
+            childrenTreeNode.add(treeNode);
+        }
+        rootTreeNode.setChildren(childrenTreeNode);
+
+        List<TreeNode> resultList = new ArrayList<>();
+        resultList.add(rootTreeNode);
+
+        treeData.put(rootTreeNode.getCode(),resultList);
     }
 
     private void handleAddList(Long authId, int type, Long roleId, List<RoleAuthorityDto> addList) {

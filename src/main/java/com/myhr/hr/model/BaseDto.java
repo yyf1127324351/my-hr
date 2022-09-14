@@ -18,6 +18,4 @@ public class BaseDto implements Serializable {
     private String updateUserName;
     private Date updateTime;
 
-    /*登陆人权限*/
-
 }

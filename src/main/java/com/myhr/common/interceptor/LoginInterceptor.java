@@ -2,7 +2,7 @@ package com.myhr.common.interceptor;
 
 import com.myhr.common.SessionContainer;
 import com.myhr.common.constant.RedisConstant;
-import com.myhr.hr.service.UserService;
+import com.myhr.hr.service.staffManage.UserService;
 import com.myhr.hr.service.redis.RedisService;
 import com.myhr.hr.vo.UserVo;
 import com.myhr.utils.*;

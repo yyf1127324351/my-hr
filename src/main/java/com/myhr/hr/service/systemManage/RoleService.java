@@ -1,6 +1,7 @@
-package com.myhr.hr.service.sys;
+package com.myhr.hr.service.systemManage;
 
 import com.myhr.common.BaseResponse;
+import com.myhr.hr.model.AuthRoleFieldDto;
 import com.myhr.hr.model.RoleAuthorityDto;
 import com.myhr.hr.model.RoleDto;
 
@@ -20,4 +21,8 @@ public interface RoleService {
     void saveAuthTree(RoleAuthorityDto roleAuthorityDto);
 
     List<RoleDto> getRoleList();
+
+    BaseResponse getRoleField(Long roleId);
+
+    BaseResponse updateAuthRoleField(AuthRoleFieldDto authRoleFieldDto, Long updateUser);
 }

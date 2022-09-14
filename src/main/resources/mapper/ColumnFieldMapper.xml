@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.myhr.hr.mapper.ColumnFieldMapper">
+
+    <select id="queryColumnFieldUserTemplateById" resultType="com.myhr.hr.model.ColumnFieldUserDto">
+        SELECT
+            id as id,
+            user_id as userId,
+            field_type as fieldType,
+            template_name as templateName,
+            column_field_ids as columnFieldIds
+        FROM sys_column_field_user
+        WHERE id = #{id}
+    </select>
+
+    <select id="queryColumnFieldUser" resultType="com.myhr.hr.model.ColumnFieldUserDto">
+        SELECT
+            id as id,
+            user_id as userId,
+            field_type as fieldType,
+            template_name as templateName,
+            is_default_show as isDefaultShow,
+            column_field_ids as columnFieldIds
+        FROM sys_column_field_user
+        WHERE (user_id = #{userId} or user_id = 0) and field_type = #{fieldType}
+
+    </select>
+    <select id="queryUserColumnField" resultType="com.myhr.hr.model.ColumnFieldDto">
+        SELECT
+            id as id,
+            field as field,
+            name as name,
+            field_type as fieldType
+        FROM sys_column_field
+        WHERE id in
+        <foreach collection="columnFieldIdList" index="index" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        and deleted = 0
+    </select>
+    <select id="queryAllColumnFiledType" resultType="com.myhr.hr.model.ColumnFieldTypeDto">
+        SELECT
+            id as id,
+            field_type_name as fieldTypeName,
+            field_code as field_code
+        FROM sys_column_field_type
+        <where>
+            deleted = 0
+        </where>
+        ORDER BY id asc
+
+    </select>
+    <select id="queryAllColumnFiled" resultType="com.myhr.hr.model.ColumnFieldDto">
+        SELECT
+        id as id,
+        field as field,
+        name as name,
+        field_type as field_type
+        FROM sys_column_field
+        <where>
+            deleted = 0
+        </where>
+        ORDER BY sort_number asc
+    </select>
+
+</mapper>

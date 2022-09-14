@@ -1,4 +1,4 @@
-package com.myhr.hr.controller;
+package com.myhr.hr.controller.common;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;

@@ -1,16 +1,15 @@
-package com.myhr.hr.service.sys.impl;
+package com.myhr.hr.service.systemManage.impl;
 
 import com.myhr.common.BaseResponse;
 import com.myhr.hr.mapper.UserMapper;
 import com.myhr.hr.mapper.UserRoleMapper;
 import com.myhr.hr.model.UserRoleDto;
-import com.myhr.hr.service.sys.UserRoleService;
+import com.myhr.hr.service.systemManage.UserRoleService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**

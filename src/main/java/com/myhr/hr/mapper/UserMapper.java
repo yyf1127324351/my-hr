@@ -4,7 +4,6 @@ import com.myhr.hr.model.UserRoleDto;
 import com.myhr.hr.model.UserDto;
 import com.myhr.hr.vo.UserVo;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -28,4 +27,7 @@ public interface UserMapper {
 
     List<UserRoleDto> getUserAccountPageList(HashMap<String, Object> map);
 
+    Long getUserInfoPageCount(HashMap<String, Object> map);
+
+    List<UserDto> getUserInfoPageList(HashMap<String, Object> map);
 }

@@ -44,6 +44,7 @@
         )
     </insert>
 
+
     <update id="updateRole">
         UPDATE sys_auth_role
         <set>
@@ -91,5 +92,50 @@
         FROM sys_auth_role r
         WHERE r.deleted = 0 and r.status = 1
     </select>
+    <select id="queryRoleColumnFiled" resultType="com.myhr.hr.model.ColumnFieldDto">
+        SELECT
+            r.role_id as roleId,
+            r.column_field_id as columnFieldId,
+            f.field_type as fieldType,
+            f.id as id,
+            f.field as field,
+            f.name as name
+        FROM sys_auth_role_field r
+        LEFT JOIN sys_column_field f ON r.column_field_id = f.id
+        WHERE r.role_id = #{roleId}
+        and r.deleted = 0 and f.deleted = 0
+    </select>
+
+    <insert id="insertBatchAuthRoleField">
+        insert into sys_auth_role_field  (
+        role_id,
+        column_field_id,
+        create_user,
+        create_time
+        )
+        values
+        <foreach collection = "authRoleFieldDto.addArray" index="index" item="item" separator=",">
+            (
+            #{authRoleFieldDto.roleId},
+            #{item},
+            #{authRoleFieldDto.createUser},
+            #{authRoleFieldDto.createTime}
+            )
+        </foreach>
+
+    </insert>
+
+    <update id="updateBatchAuthRoleField">
+        UPDATE sys_auth_role_field
+        set deleted = 1,
+        update_user = #{authRoleFieldDto.updateUser},
+        update_time = #{authRoleFieldDto.updateTime}
+        where role_id = #{authRoleFieldDto.roleId}
+        and column_field_id in
+        <foreach collection="authRoleFieldDto.deductArray" index="index" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        and deleted = 0
+    </update>
 
 </mapper>

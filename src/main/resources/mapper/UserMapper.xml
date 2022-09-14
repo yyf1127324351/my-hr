@@ -52,4 +52,39 @@
             limit #{start} , #{rows}
         </if>
     </select>
+
+
+    <sql id="sql_where_userInfo">
+        <where>
+            <if test="userId != null ">
+                and u.id = #{userId}
+            </if>
+            <if test="userName != null and userName != ''">
+                and u.user_name like CONCAT('%', #{userName}, '%')
+            </if>
+            <if test="loginName != null and loginName != ''">
+                and u.login_name like  CONCAT('%', #{loginName}, '%')
+            </if>
+        </where>
+    </sql>
+    <select id="getUserInfoPageCount" resultType="java.lang.Long">
+        select
+        count(1)
+        from user u
+        <include refid="sql_where_userInfo"/>
+    </select>
+    <select id="getUserInfoPageList" resultType="com.myhr.hr.model.UserDto">
+        select
+        u.id as id,
+        u.user_name as userName,
+        u.login_name as loginName,
+        u.company_email as companyEmail,
+        u.work_place as workPlace,
+        u.staff_type as staffType
+        FROM user u
+        <include refid="sql_where_userInfo"/>
+        <if test="page !=null ">
+            limit #{start} , #{rows}
+        </if>
+    </select>
 </mapper>

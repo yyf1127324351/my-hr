@@ -1,10 +1,10 @@
 package com.myhr.hr.controller.systemManage;
 
 import com.myhr.common.BaseResponse;
-import com.myhr.hr.controller.BaseController;
+import com.myhr.hr.controller.common.BaseController;
 import com.myhr.hr.model.SysConfigTypeDto;
 import com.myhr.hr.model.SysConfigValueDto;
-import com.myhr.hr.service.sys.SysConfigService;
+import com.myhr.hr.service.systemManage.SysConfigService;
 import com.myhr.hr.vo.TreeNode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

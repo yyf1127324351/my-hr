@@ -3,7 +3,7 @@ package com.myhr.hr.controller;
 import com.myhr.common.SessionContainer;
 import com.myhr.common.constant.RedisConstant;
 import com.myhr.hr.model.UserDto;
-import com.myhr.hr.service.UserService;
+import com.myhr.hr.service.staffManage.UserService;
 import com.myhr.hr.service.redis.RedisService;
 import com.myhr.utils.EncodesUtils;
 import lombok.extern.slf4j.Slf4j;

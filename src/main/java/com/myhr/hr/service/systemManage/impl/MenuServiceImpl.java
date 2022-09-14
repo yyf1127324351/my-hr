@@ -1,9 +1,9 @@
-package com.myhr.hr.service.sys.impl;
+package com.myhr.hr.service.systemManage.impl;
 import com.myhr.common.BaseResponse;
 import com.myhr.common.SessionContainer;
 import com.myhr.hr.mapper.MenuMapper;
 import com.myhr.hr.model.MenuDto;
-import com.myhr.hr.service.sys.MenuService;
+import com.myhr.hr.service.systemManage.MenuService;
 import com.myhr.hr.vo.MenuVo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -11,9 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
 

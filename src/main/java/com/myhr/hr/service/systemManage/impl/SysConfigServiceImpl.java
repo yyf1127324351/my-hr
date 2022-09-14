@@ -1,10 +1,10 @@
-package com.myhr.hr.service.sys.impl;
+package com.myhr.hr.service.systemManage.impl;
 
 import com.myhr.common.BaseResponse;
 import com.myhr.hr.mapper.SysConfigMapper;
 import com.myhr.hr.model.SysConfigTypeDto;
 import com.myhr.hr.model.SysConfigValueDto;
-import com.myhr.hr.service.sys.SysConfigService;
+import com.myhr.hr.service.systemManage.SysConfigService;
 import com.myhr.hr.vo.TreeNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
