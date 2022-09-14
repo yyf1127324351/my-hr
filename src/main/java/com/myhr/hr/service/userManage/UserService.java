@@ -1,4 +1,4 @@
-package com.myhr.hr.service.staffManage;
+package com.myhr.hr.service.userManage;
 
 import com.myhr.common.BaseResponse;
 import com.myhr.hr.model.UserDto;

@@ -1,10 +1,9 @@
-package com.myhr.hr.service.staffManage.impl;
+package com.myhr.hr.service.userManage.impl;
 
 import com.myhr.common.BaseResponse;
 import com.myhr.hr.mapper.UserMapper;
 import com.myhr.hr.model.UserDto;
-import com.myhr.hr.model.UserRoleDto;
-import com.myhr.hr.service.staffManage.UserService;
+import com.myhr.hr.service.userManage.UserService;
 import com.myhr.hr.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

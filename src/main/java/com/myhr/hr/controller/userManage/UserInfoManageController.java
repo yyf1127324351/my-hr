@@ -2,7 +2,7 @@ package com.myhr.hr.controller.userManage;
 
 import com.myhr.common.BaseResponse;
 import com.myhr.hr.controller.common.BaseController;
-import com.myhr.hr.service.staffManage.UserService;
+import com.myhr.hr.service.userManage.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
