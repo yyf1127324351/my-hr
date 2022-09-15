@@ -105,6 +105,23 @@
         WHERE r.role_id = #{roleId}
         and r.deleted = 0 and f.deleted = 0
     </select>
+    <select id="queryUserRoleColumnFiledList" resultType="com.myhr.hr.model.ColumnFieldDto">
+        SELECT
+            DISTINCT
+            f.column_field_id as id,
+            d.field as field,
+            d.`name` as name,
+            d.field_type as fieldType
+        FROM
+            sys_auth_user_role r
+            LEFT JOIN sys_auth_role_field f on r.role_id = f.role_id and f.deleted = 0
+            LEFT JOIN sys_column_field d ON f.column_field_id = d.id and d.deleted = 0
+        WHERE
+            r.user_id = #{userId}
+            AND r.deleted = 0 and f.column_field_id is not NULL
+            and d.field_type = #{fieldType}
+        ORDER BY f.column_field_id asc
+    </select>
 
     <insert id="insertBatchAuthRoleField">
         insert into sys_auth_role_field  (

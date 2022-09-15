@@ -28,4 +28,6 @@ public interface RoleMapper {
     int insertBatchAuthRoleField(@Param("authRoleFieldDto") AuthRoleFieldDto authRoleFieldDto);
 
     int updateBatchAuthRoleField(@Param("authRoleFieldDto") AuthRoleFieldDto authRoleFieldDto);
+
+    List<ColumnFieldDto> queryUserRoleColumnFiledList(@Param("userId") Long userId, @Param("fieldType") Integer fieldType);
 }

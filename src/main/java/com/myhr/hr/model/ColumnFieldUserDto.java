@@ -7,7 +7,7 @@ import lombok.Data;
 public class ColumnFieldUserDto {
     private Long id;
     private Long userId;
-    private String fieldType;
+    private Integer fieldType;
     private String templateName;
     private String columnFieldIds;
     private Integer isDefaultShow; //是否默认展示 0否 1是

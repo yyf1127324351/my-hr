@@ -191,6 +191,7 @@
             iconCls:'fa fa-edit',
             shadow: false,
             modal: true,
+            resizable : true,
             buttons:[{
                 text:'保存',
                 iconCls:'icon-ok',

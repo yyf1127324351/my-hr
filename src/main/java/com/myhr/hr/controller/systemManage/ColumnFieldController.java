@@ -25,6 +25,16 @@ public class ColumnFieldController {
     @Autowired
     ColumnFieldService columnFieldService;
 
+    /**
+     * 获取员工的展示列模板
+     */
+    @RequestMapping("/queryColumnFieldUserTemplate")
+    @ResponseBody
+    public List<ColumnFieldUserDto> queryColumnFieldUserTemplate(Integer fieldType) {
+        Long userId = SessionContainer.getUserId();
+        return columnFieldService.queryColumnFieldUserTemplate(fieldType,userId);
+    }
+
 
     /**
      * 获取员工 动态组装列 表头
@@ -36,15 +46,7 @@ public class ColumnFieldController {
         return columnFieldService.queryUserColumnField(templateId,userId);
     }
 
-    /**
-     * 获取员工的展示列模板
-     */
-    @RequestMapping("/queryColumnFieldUserTemplate")
-    @ResponseBody
-    public List<ColumnFieldUserDto> queryColumnFieldUserTemplate(Integer fieldType) {
-        Long userId = SessionContainer.getUserId();
-        return columnFieldService.queryColumnFieldUserTemplate(fieldType,userId);
-    }
+
 
 
 }

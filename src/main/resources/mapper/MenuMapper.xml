@@ -72,9 +72,11 @@
 
 	<select id="leftLevel1List" resultType="com.myhr.hr.vo.MenuVo">
 		select
+		DISTINCT
 		<include refid="sql_menu_column"/>
 		from sys_menu m where m.deleted = 0 and m.id in
 		(	select
+			DISTINCT
 			m2.parent_id
 			from sys_auth_user_role r
 			LEFT JOIN sys_auth_role_authority a on r.role_id = a.role_id
@@ -87,6 +89,7 @@
 	</select>
     <select id="leftLevel2List" resultType="com.myhr.hr.vo.MenuVo">
         select
+		DISTINCT
 		<include refid="sql_menu_column"/>
 		from sys_auth_user_role r
 		LEFT JOIN sys_auth_role_authority a on r.role_id = a.role_id
