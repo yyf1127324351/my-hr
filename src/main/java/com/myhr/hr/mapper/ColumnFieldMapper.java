@@ -2,7 +2,7 @@ package com.myhr.hr.mapper;
 
 import com.myhr.hr.model.ColumnFieldDto;
 import com.myhr.hr.model.ColumnFieldTypeDto;
-import com.myhr.hr.model.ColumnFieldUserDto;
+import com.myhr.hr.model.ColumnFieldTemplateUserDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -19,11 +19,11 @@ import java.util.Map;
 @Mapper
 @Repository
 public interface ColumnFieldMapper {
-    List<ColumnFieldUserDto> queryColumnFieldUser(@Param("fieldType") Integer fieldType, @Param("userId") Long userId);
+    List<ColumnFieldTemplateUserDto> queryColumnFieldTemplateUser(@Param("fieldType") Integer fieldType, @Param("userId") Long userId, @Param("allFlag") Integer allFlag);
 
     List<ColumnFieldDto> queryUserColumnField(@Param("columnFieldIdList") List<Long> columnFieldIdList);
 
-    ColumnFieldUserDto queryColumnFieldUserTemplateById(@Param("id") Long id);
+    ColumnFieldTemplateUserDto queryColumnFieldTemplateUserById(@Param("id") Long id);
 
     List<ColumnFieldTypeDto> queryAllColumnFiledType(Map<String, Object> paramMap);
 

@@ -15,7 +15,7 @@
 <script type="text/javascript" src="/static/common/js/autocomplete/jquery.autocomplete.js?v=${v}"></script>
 <script type="text/javascript" src="/static/common/js/underscore-1.8.3-min.js?v=${v}"></script>
 <script type="text/javascript" src="/static/common/js/layer.min.js?v=${v}"></script>
-
+<script type="text/javascript" src="/static/common/js/bootstrap-editable.min.js?v=${v}"></script>
 
 <script type="text/javascript" src="/static/common/js/jquery-form.js?v=${v}"></script>
 

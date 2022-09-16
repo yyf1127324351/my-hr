@@ -1,18 +1,17 @@
 package com.myhr.hr.service.common;
 
+import com.myhr.common.BaseResponse;
 import com.myhr.hr.mapper.ColumnFieldMapper;
 import com.myhr.hr.mapper.RoleMapper;
 import com.myhr.hr.model.ColumnFieldDto;
-import com.myhr.hr.model.ColumnFieldUserDto;
+import com.myhr.hr.model.ColumnFieldTemplateUserDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -32,25 +31,82 @@ public class ColumnFieldServiceImpl implements ColumnFieldService {
 
 
     @Override
-    public List<ColumnFieldDto> queryUserColumnField(Long templateId, Long userId) {
+    public List<ColumnFieldDto> queryUserColumnField(Long fieldTemplateUserId, Long userId) {
+        List<ColumnFieldDto> resultList = new ArrayList<>();
+        //获取 该模板选中的列属性 和 非选中的列属性 合集
+        List<ColumnFieldDto> allList = handleUserColumnFieldAll(fieldTemplateUserId,userId);
+        if (CollectionUtils.isNotEmpty(allList)) {
+            //获取模板中选中的列属性
+            resultList = allList.stream().filter(e -> e.getHasSelectFlag() == 1).collect(Collectors.toList());
+        }
+        return resultList;
+    }
+
+    @Override
+    public BaseResponse queryUserColumnFieldMap(Long fieldTemplateUserId, Long userId) {
+        //获取 该模板选中的列属性 和 非选中的列属性 合集
+        List<ColumnFieldDto> allList = handleUserColumnFieldAll(fieldTemplateUserId,userId);
+        if (CollectionUtils.isNotEmpty(allList)) {
+            Map map = new HashMap();
+            //获取模板中选中的列属性
+            List<ColumnFieldDto> selectList = allList.stream().filter(e -> e.getHasSelectFlag() == 1).collect(Collectors.toList());
+            map.put("selectFields", selectList);
+            //获取模板中 未选中的列属性
+            List<ColumnFieldDto> noSelectList = allList.stream().filter(e -> e.getHasSelectFlag() == 0).collect(Collectors.toList());
+            map.put("noSelectFields", noSelectList);
+            return BaseResponse.success(map);
+        }else {
+            return BaseResponse.paramError("该员工无其他列属性权限,无法设置列模板！");
+        }
+    }
+
+    @Override
+    public List<ColumnFieldTemplateUserDto> queryColumnFieldTemplateUser(Integer fieldType, Long userId, Integer allFlag) {
+        //根据登陆人id和列属性类型查出列展示模板
+        List<ColumnFieldTemplateUserDto> list = columnFieldMapper.queryColumnFieldTemplateUser(fieldType,userId,allFlag);
+
+        list.sort(Comparator.comparing(ColumnFieldTemplateUserDto::getIsDefaultShow).reversed()); //倒序排序
+
+        return list;
+    }
+
+
+    public List<ColumnFieldDto> handleUserColumnFieldAll(Long fieldTemplateUserId, Long userId) {
         List<ColumnFieldDto> resultList = new ArrayList<>();
         //员工所选模板
-        ColumnFieldUserDto filedUser = columnFieldMapper.queryColumnFieldUserTemplateById(templateId);
+        ColumnFieldTemplateUserDto filedUser = columnFieldMapper.queryColumnFieldTemplateUserById(fieldTemplateUserId);
         if (null != filedUser) {
             //根据登陆人id，获取登陆人的角色，再根据角色获取到 其拥有的列属性
             List<ColumnFieldDto> authFieldList = roleMapper.queryUserRoleColumnFiledList(userId,filedUser.getFieldType());
             if (CollectionUtils.isNotEmpty(authFieldList)) {
                 //该员工有用的角色下有权限的 列属性id集合
                 List<Long> authFieldIdList = authFieldList.stream().map(ColumnFieldDto :: getId).collect(Collectors.toList());
+                Map<Long,ColumnFieldDto> authFieldMap = authFieldList.stream().collect((Collectors.toMap(ColumnFieldDto::getId, Function.identity(), (v1, v2) -> v1)));
 
                 String columnFieldIds = filedUser.getColumnFieldIds();
                 //员工所选模板包含的 列属性id集合
                 List<Long> columnFieldIdList = Arrays.asList(columnFieldIds.split(",")).stream().map(s -> Long.valueOf(s)).collect(Collectors.toList());
-                //取交集
+                //取交集(模板中已经选中的)
                 List<Long> intersectionIds = columnFieldIdList.stream().filter(item -> authFieldIdList.contains(item)).collect(Collectors.toList());
                 if (CollectionUtils.isNotEmpty(intersectionIds)) {
-                    List<ColumnFieldDto> list = columnFieldMapper.queryUserColumnField(intersectionIds);
-                    resultList.addAll(list);
+                    for (Long id : intersectionIds) {
+                        ColumnFieldDto selectField = authFieldMap.get(id);
+                        selectField.setHasSelectFlag(1);
+                        resultList.add(selectField);
+                    }
+//                    List<ColumnFieldDto> list = columnFieldMapper.queryUserColumnField(intersectionIds);
+//                    resultList.addAll(list);
+                }
+                //取差集(模板中未选中的) authFieldIdList - columnFieldIdList
+                List<Long> noSelectIds = authFieldIdList.stream().filter(item -> !columnFieldIdList.contains(item)).collect(Collectors.toList());
+                if (CollectionUtils.isNotEmpty(noSelectIds)) {
+                    for (Long id : noSelectIds) {
+                        ColumnFieldDto noSelectField = authFieldMap.get(id);
+                        noSelectField.setHasSelectFlag(0);
+                        resultList.add(noSelectField);
+                    }
+//                    List<ColumnFieldDto> list = columnFieldMapper.queryUserColumnField(noSelectIds);
+//                    resultList.addAll(list);
                 }
 
             }
@@ -58,13 +114,4 @@ public class ColumnFieldServiceImpl implements ColumnFieldService {
         return resultList;
     }
 
-    @Override
-    public List<ColumnFieldUserDto> queryColumnFieldUserTemplate(Integer fieldType, Long userId) {
-        //根据登陆人id和列属性类型查出列展示模板
-        List<ColumnFieldUserDto> list = columnFieldMapper.queryColumnFieldUser(fieldType,userId);
-
-        list.sort(Comparator.comparing(ColumnFieldUserDto::getIsDefaultShow).reversed()); //倒序排序
-
-        return list;
-    }
 }

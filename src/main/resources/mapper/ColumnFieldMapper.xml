@@ -3,28 +3,33 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.myhr.hr.mapper.ColumnFieldMapper">
 
-    <select id="queryColumnFieldUserTemplateById" resultType="com.myhr.hr.model.ColumnFieldUserDto">
+    <select id="queryColumnFieldTemplateUserById" resultType="com.myhr.hr.model.ColumnFieldTemplateUserDto">
         SELECT
             id as id,
             user_id as userId,
             field_type as fieldType,
             template_name as templateName,
             column_field_ids as columnFieldIds
-        FROM sys_column_field_user
+        FROM sys_column_field_template_user
         WHERE id = #{id}
     </select>
 
-    <select id="queryColumnFieldUser" resultType="com.myhr.hr.model.ColumnFieldUserDto">
+    <select id="queryColumnFieldTemplateUser" resultType="com.myhr.hr.model.ColumnFieldTemplateUserDto">
         SELECT
-            id as id,
-            user_id as userId,
-            field_type as fieldType,
-            template_name as templateName,
-            is_default_show as isDefaultShow,
-            column_field_ids as columnFieldIds
-        FROM sys_column_field_user
-        WHERE (user_id = #{userId} or user_id = 0) and field_type = #{fieldType}
-
+        id as id,
+        user_id as userId,
+        field_type as fieldType,
+        template_name as templateName,
+        is_default_show as isDefaultShow,
+        column_field_ids as columnFieldIds
+        FROM sys_column_field_template_user
+        WHERE field_type = #{fieldType}
+        <if test="allFlag != null and allFlag == 0">
+            and user_id = #{userId}
+        </if>
+        <if test="allFlag != 0">
+            and (user_id = #{userId} or user_id = 0)
+        </if>
     </select>
     <select id="queryUserColumnField" resultType="com.myhr.hr.model.ColumnFieldDto">
         SELECT

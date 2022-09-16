@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>员工信息管理</title>
     <#include "/common/common.ftl"/>
+    <script type="text/javascript" src="/static/common/common.js?v=${v}"></script>
 </head>
 <body class="easyui-layout">
 <div data-options="region:'north'" class="panel-fit">
@@ -41,14 +42,22 @@
 <div data-options="region:'center'" >
     <div id="button_tab" style="">
         <table class="button_table">
-            <td style="height: 20px;width: 100%">
-                <a class="easyui-linkbutton toolButton" onclick="addInfo()" data-options="iconCls:'icon-add'"style="margin-top: 2px" >新增</a>
-            </td>
+            <tr>
+                <td style="height: 20px;">
+                    <a class="easyui-linkbutton toolButton" data-options="iconCls:'fa fa-plus'" onclick="addInfo()">新增</a>
+                </td>
+
+                <td style="height: 20px;">
+                    <a class="easyui-linkbutton toolButton" data-options="iconCls:'fa fa-pencil-square-o'" onclick="showColumnWindow(1,'template')">设置列模版</a>
+                </td>
+            </tr>
+
         </table>
     </div>
     <table id="data_table" style="height: 100%;"></table>
 </div>
-
+<#--设置列模板div-->
+<div id="columnWindow"></div>
 
 </body>
 
@@ -63,7 +72,7 @@
         };
 
         $("#template").combobox({
-            url : '/columnField/queryColumnFieldUserTemplate?fieldType=1',
+            url : '/columnField/queryColumnFieldTemplateUser?fieldType=1',
             valueField : 'id',
             textField : 'templateName',
             multiple: false,
@@ -81,7 +90,7 @@
                 loadColumn(node.id);
             }
             // onShowPanel:function(){
-            //     $(this).combobox('reload','/columnField/queryColumnFieldUserTemplate?fieldType=1');
+            //     $(this).combobox('reload','/columnField/queryColumnFieldTemplateUser?fieldType=1');
             // }
 
         });
@@ -127,7 +136,7 @@
 
     function clearQuery() {
         $('#search_form').form('clear');
-        $("#template").combobox('reload','/columnField/queryColumnFieldUserTemplate?fieldType=1');
+        $("#template").combobox('reload','/columnField/queryColumnFieldTemplateUser?fieldType=1');
         queryList();
     }
 
@@ -144,7 +153,7 @@
         var columns;
         $.ajax({
             url: '/columnField/queryUserColumnField',
-            data:{'templateId':templateId},
+            data:{'fieldTemplateUserId':templateId},
             type: 'post',
             dataType: "json",
             async: false,

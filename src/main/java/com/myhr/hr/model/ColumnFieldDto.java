@@ -11,6 +11,9 @@ public class ColumnFieldDto extends BaseDto{
     private String name;
     private Integer fieldType;
 
+    //是否在列属性模板中  1被选中，0未被选中 （仅在设置列属性模板时使用）
+    private Integer hasSelectFlag;
+
     private Long roleId;
     private Long columnFieldId;
 

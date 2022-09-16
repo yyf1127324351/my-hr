@@ -4,7 +4,7 @@ package com.myhr.hr.model;
 import lombok.Data;
 
 @Data
-public class ColumnFieldUserDto {
+public class ColumnFieldTemplateUserDto {
     private Long id;
     private Long userId;
     private Integer fieldType;
