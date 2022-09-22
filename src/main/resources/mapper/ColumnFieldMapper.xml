@@ -23,6 +23,11 @@
         </set>
         WHERE id = #{id}
     </update>
+    <update id="updateNeedNotDefaultShow">
+        UPDATE sys_column_field_template_user
+        set is_default_show = 0
+        WHERE id != #{id} and user_id = #{userId} and field_type = #{fieldType}
+    </update>
 
     <select id="queryColumnFieldTemplateUserById" resultType="com.myhr.hr.model.ColumnFieldTemplateUserDto">
         SELECT
@@ -30,6 +35,7 @@
             user_id as userId,
             field_type as fieldType,
             template_name as templateName,
+            is_default_show as isDefaultShow,
             column_field_ids as columnFieldIds
         FROM sys_column_field_template_user
         WHERE id = #{id}
@@ -88,6 +94,11 @@
             deleted = 0
         </where>
         ORDER BY sort_number asc
+    </select>
+    <select id="getSameNameOfTemplate" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM sys_column_field_template_user
+        WHERE id != #{id} and template_name = #{templateName}
     </select>
 
 </mapper>

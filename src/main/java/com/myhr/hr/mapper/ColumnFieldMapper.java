@@ -30,4 +30,8 @@ public interface ColumnFieldMapper {
     List<ColumnFieldDto> queryAllColumnFiled(Map<String, Object> paramMap);
 
     int updateColumnFieldTemplateUser(ColumnFieldTemplateUserDto columnFieldTemplateUserDto);
+
+    int updateNeedNotDefaultShow(@Param("id") Long id, @Param("userId") Long userId, @Param("fieldType") Integer fieldType);
+
+    int getSameNameOfTemplate(ColumnFieldTemplateUserDto columnFieldTemplateUserDto);
 }

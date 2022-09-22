@@ -61,10 +61,27 @@ public class ColumnFieldServiceImpl implements ColumnFieldService {
     }
 
     @Override
-    public BaseResponse updateColumnFieldTemplateUser(ColumnFieldTemplateUserDto columnFieldTemplateUserDto, Long userId) {
+    public BaseResponse updateColumnFieldTemplateUser(ColumnFieldTemplateUserDto columnFieldTemplateUserDto, Long updateUser) {
+
+        //校验该模板名称是否存在，如果已经存在则不能保存
+        int sameCount = columnFieldMapper.getSameNameOfTemplate(columnFieldTemplateUserDto);
+        if (sameCount > 0) {
+            return BaseResponse.paramError("该模板名称已存在，无法使用该名称");
+        }
+
+        //查出原模板
+        ColumnFieldTemplateUserDto oldTemplate = columnFieldMapper.queryColumnFieldTemplateUserById(columnFieldTemplateUserDto.getId());
+
         columnFieldTemplateUserDto.setUpdateTime(new Date());
-        columnFieldTemplateUserDto.setUpdateUser(userId);
+        columnFieldTemplateUserDto.setUpdateUser(updateUser);
+        //更新
         columnFieldMapper.updateColumnFieldTemplateUser(columnFieldTemplateUserDto);
+        //如果 原模板未将该模板设置为默认展示 且本次将该模板设置了默认展示该模板 即 isDefaultShow = 1，
+        // 则将该员工，改类型的其他模板isDefaultShow都设置为0
+        if (null != oldTemplate && oldTemplate.getIsDefaultShow() == 0 && columnFieldTemplateUserDto.getIsDefaultShow() == 1) {
+            columnFieldMapper.updateNeedNotDefaultShow(oldTemplate.getId(),oldTemplate.getUserId(),oldTemplate.getFieldType());
+        }
+
         return BaseResponse.success("更新成功");
     }
 

@@ -12,13 +12,19 @@
 		<div align="center">
 			<table border="0" width="100%" class="search_table">
 				<tr>
-					<td width="20%" align='right'>展示列模板：</td>
-					<td width="20%" align='left'>
-                        <input id="editTemplate" class="easyui-combobox" style="width: 200px;">
+					<td width="20%" align='right'>展示列模板:</td>
+					<td width="15%" align='left'>
+                        <input id="editTemplate" class="easyui-combobox" style="width: 180px;">
 					</td>
-					<td width="60%" align='left'>
-						<a href="javascript:saveTem();"style="width: 100px;" class="easyui-linkbutton">保存</a>
-						<a href="javascript:editTem();" style="width: 120px;" class="easyui-linkbutton">修改模板名称</a>
+                    <td width="23%" align='right'>
+                        默认展示该模板:
+                    </td>
+                    <td align='left'>
+                        <input type="checkbox" id="isDefaultShow" name="isDefaultShow"/>
+                    </td>
+					<td width="45%" align='right'>
+						<a href="javascript:saveTem();" class="sel_btn ch_cls">保存</a>
+						<a href="javascript:editTem();" class="sel_btn ch_cls">修改模板名称</a>
 					</td>
 				</tr>
 			</table>
@@ -139,11 +145,18 @@
                 onLoadSuccess : function(){
                     var fieldTemplateUserId = $("#fieldTemplateUserId").val();
                     if (fieldTemplateUserId != null && fieldTemplateUserId > 0) {
+                        $("#isDefaultShow").prop("checked", true)
                         $(this).combobox("setValue", fieldTemplateUserId);
                     }else {
                         var data = $(this).combobox("getData");
                         if (data && data.length > 0) {
                             fieldTemplateUserId = data[0].id;
+                            var isDefaultShow = data[0].isDefaultShow;
+                            if (isDefaultShow == 1) {
+                                $("#isDefaultShow").prop("checked", true)
+                            }else {
+                                $("#isDefaultShow").prop("checked", false)
+                            }
                             $(this).combobox("setValue", fieldTemplateUserId);
                         }
                     }
@@ -152,6 +165,7 @@
 
                 },
                 onSelect: function (node) {
+
 
                 }
             });
@@ -261,6 +275,14 @@
             var fieldTemplateUserId = $("#editTemplate").combobox("getValue");
             var templateName = $("#editTemplate").combobox("getText");
 
+
+            var isDefaultShowResult= $('#isDefaultShow').is(':checked');
+            var isDefaultShow = 0;
+            if (isDefaultShowResult) {
+                isDefaultShow = 1;
+            }
+
+
             var options = $('#show_select')[0].options;
             var columnFieldIds='';
             for(var i=0; i<options.length; i++){
@@ -282,7 +304,7 @@
                 $.ajax({
                     type : "POST",
                     url : "/columnField/updateColumnFieldTemplateUser",
-                    data : {"id":fieldTemplateUserId,"columnFieldIds":columnFieldIds,"templateName":templateName},
+                    data : {"id":fieldTemplateUserId,"columnFieldIds":columnFieldIds,"templateName":templateName,"isDefaultShow":isDefaultShow},
                     dataType: "json",
                     success : function(result) {
                         $.messager.progress('close');

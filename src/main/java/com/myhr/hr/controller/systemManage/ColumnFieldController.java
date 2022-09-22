@@ -92,9 +92,10 @@ public class ColumnFieldController {
             return columnFieldService.updateColumnFieldTemplateUser(columnFieldTemplateUserDto,userId);
         } catch (Exception e) {
             log.error("updateColumnFieldTemplateUserException:" + e.getMessage(), e);
-            return BaseResponse.error();
+            return BaseResponse.error("展示列模板更新失败！");
         }
     }
+
 
 
 
