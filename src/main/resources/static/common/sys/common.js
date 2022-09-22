@@ -20,28 +20,7 @@ function showColumnWindow(fieldType,templateComboboxId) {
         left: '20%',
         modal:true,
         onClose:function(){
-            if($("#filed_save").val()!=''){
-                //修改过模板--需要刷新页面
-                //window.parent.window.openTab(name,url);
-                //刷新列表和模板下拉框
-                $.ajax({
-                    url: '/filed/queryListtemplate',
-                    data:{'table':table},
-                    type: 'post',
-                    dataType: "json",
-                    success: function (returnValue) {//异步获取要动态生成的列 别名，宽度也可以
-                        var arr = returnValue.columns;
-                        for(var i=0;arr!=null&&i<arr.length;i++){
-                            $("#z_"+arr[i].code).text(arr[i].name);
-                        }
-                    }
-                });
-                if($("#"+templateComboboxId).hasClass("easyui-combobox")) {
-                    $("#"+templateComboboxId).combobox("reload");
-                }else {
-                    loadColumn($("#"+id).find("option:selected").attr("value"));
-                }
-            }
+            $("#template").combobox("reload");
             $('#new_columnWindow').dialog("destroy");
         },
         closable: true,

@@ -2,6 +2,27 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.myhr.hr.mapper.ColumnFieldMapper">
+    <update id="updateColumnFieldTemplateUser">
+        update sys_column_field_template_user
+        <set>
+            <if test="columnFieldIds != null and columnFieldIds != ''">
+                column_field_ids = #{columnFieldIds},
+            </if>
+            <if test="templateName != null and templateName != ''">
+                template_name = #{templateName},
+            </if>
+            <if test="isDefaultShow != null ">
+                is_default_show = #{isDefaultShow},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateUser != null ">
+                update_user = #{updateUser},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
 
     <select id="queryColumnFieldTemplateUserById" resultType="com.myhr.hr.model.ColumnFieldTemplateUserDto">
         SELECT

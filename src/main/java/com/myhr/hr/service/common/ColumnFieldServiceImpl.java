@@ -61,6 +61,14 @@ public class ColumnFieldServiceImpl implements ColumnFieldService {
     }
 
     @Override
+    public BaseResponse updateColumnFieldTemplateUser(ColumnFieldTemplateUserDto columnFieldTemplateUserDto, Long userId) {
+        columnFieldTemplateUserDto.setUpdateTime(new Date());
+        columnFieldTemplateUserDto.setUpdateUser(userId);
+        columnFieldMapper.updateColumnFieldTemplateUser(columnFieldTemplateUserDto);
+        return BaseResponse.success("更新成功");
+    }
+
+    @Override
     public List<ColumnFieldTemplateUserDto> queryColumnFieldTemplateUser(Integer fieldType, Long userId, Integer allFlag) {
         //根据登陆人id和列属性类型查出列展示模板
         List<ColumnFieldTemplateUserDto> list = columnFieldMapper.queryColumnFieldTemplateUser(fieldType,userId,allFlag);

@@ -12,7 +12,7 @@
 <link rel="stylesheet" type="text/css" href="/static/common/css/zTreeStyle.css">
 
 
-<script type="text/javascript" src="/static/common/js/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="/static/common/js/jquery-1.11.3.min.js?v=${.now?string('hhmmSSsss')}"></script>
 <script type="text/javascript" src="/static/common/js/jquery.min.js"></script>
 <script type="text/javascript" src="/static/common/js/jquery.easyui.min.js"></script>
 <script type="text/javascript" src="/static/common/js/easyui-lang-zh_CN.js"></script>

@@ -8,9 +8,8 @@
 	<input type="hidden" id="fieldType" value="${fieldType}" />
     <input type="hidden" id="fieldTemplateUserId" value="${fieldTemplateUserId}" />
 
-	<input type="hidden" id="field_save"/>
 	<div region="north" border="false" style=" padding: 5px">
-		<div class="" align="center">
+		<div align="center">
 			<table border="0" width="100%" class="search_table">
 				<tr>
 					<td width="20%" align='right'>展示列模板：</td>
@@ -72,20 +71,56 @@
 
 			</tr>
 		</table>
-		<div style="display:none">
-		   <div id="edit_list_name" class="dialog" title="修改模板名称" style="width:220px; height:130px;">
-				<table style="width:auto;margin:10px 10px 0 20px;">
-					<tr style="height:30px;">
-						<td>名称</td>
-						<td style="align:center"><input class="easyui-textbox"  id="template_name"  type="text" style="width: 200px;" maxlength=20></td>
-					</tr>
-				</table>
-			</div>
-		</div>
 	</div>
+
+    <div style="display:none">
+        <div id="edit_list_name" class="dialog">
+            <form>
+                <table style="width:95%;margin:10px 10px 10px 10px;">
+                    <tr style="height:30px;">
+                        <th style="width: 80px;text-align:right;" >模板名称：<font size="3" color="red">*</font></th>
+                        <td style="align:center;">
+                            <input id="templateName" class="easyui-textbox" type="text" style="width: 200px;" />
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+
+
+
+
+
 
     <script type="text/javascript">
         $(document).ready(function () {
+
+            $("#edit_list_name").dialog({
+                title:'修改模板名称',
+                width:'350',
+                height:'150',
+                close : true,
+                shadow:false,
+                modal:true,
+                buttons:[{
+                    text:'确定',
+                    iconCls:'icon-ok',
+                    handler:function(){
+                        saveTemplateName();
+                    }
+                },{
+                    text:'取消',
+                    iconCls:'icon-cancel',
+                    handler:function(){
+                        $('#edit_list_name').dialog('close');
+                    }
+                }],
+                onClose:function(){
+                },
+                closable: true,
+                closed: true   //已关闭
+            });
 
             $("#noshow_select").dblclick(function(){
                 right_column();//双击选择
@@ -102,7 +137,6 @@
                 multiple: false,
                 editable:false,
                 onLoadSuccess : function(){
-                    debugger;
                     var fieldTemplateUserId = $("#fieldTemplateUserId").val();
                     if (fieldTemplateUserId != null && fieldTemplateUserId > 0) {
                         $(this).combobox("setValue", fieldTemplateUserId);
@@ -121,6 +155,9 @@
 
                 }
             });
+
+
+
         });
 
         function initColumnFieldShow(fieldTemplateUserId){
@@ -136,11 +173,11 @@
                         $("#noshow_select").html("");
                         $("#show_select").html("");
                         for(var i=0;noshowField!=null&&i<noshowField.length;i++){
-                            var option ="<option value='"+noshowField[i].field+"'>"+noshowField[i].name+"</option>";
+                            var option ="<option value='"+noshowField[i].id+"'>"+noshowField[i].name+"</option>";
                             $("#noshow_select").append(option);
                         }
                         for(var i=0;showField!=null&& i<showField.length;i++){
-                            var option ="<option value='"+showField[i].field+"'>"+showField[i].name+"</option>";
+                            var option ="<option value='"+showField[i].id+"'>"+showField[i].name+"</option>";
                             $("#show_select").append(option);
                         }
                     }else {
@@ -198,6 +235,7 @@
             }
 
         }
+
         //下移
         function down_column(){
             var selected= $("#show_select").find("option:selected");
@@ -218,7 +256,71 @@
             }
         }
 
+        //保存
+        function saveTem(){
+            var fieldTemplateUserId = $("#editTemplate").combobox("getValue");
+            var templateName = $("#editTemplate").combobox("getText");
 
+            var options = $('#show_select')[0].options;
+            var columnFieldIds='';
+            for(var i=0; i<options.length; i++){
+                //去掉默认显示的(例如：操作，姓名等固定列)
+                if(!options[i].disabled){
+                    if(columnFieldIds==''){
+                        //第一笔
+                        columnFieldIds = options[i].value;
+                    }else{
+                        columnFieldIds = columnFieldIds + ',' + options[i].value;
+                    }
+                }
+            }
+            if(columnFieldIds==''){
+                layer.alert('请至少选择一项！', {icon: 0, title: "提示"});
+                return ;
+            }else{
+                $.messager.progress({title:'保存中...'});
+                $.ajax({
+                    type : "POST",
+                    url : "/columnField/updateColumnFieldTemplateUser",
+                    data : {"id":fieldTemplateUserId,"columnFieldIds":columnFieldIds,"templateName":templateName},
+                    dataType: "json",
+                    success : function(result) {
+                        $.messager.progress('close');
+                        if(result.code == 200){
+                            layer.alert(result.message, {icon: 1});
+                        }else{
+                            layer.alert(result.message, {icon: 5});
+                        }
+                    },
+                    error :function(){
+                        layer.alert("展示列模板保存报错了！", {icon: 5, title: "错误"});
+                        $.messager.progress('close');
+                    }
+                });
+            }
+        }
+
+        //打开编辑模板名称弹框
+        function editTem(){
+            var templateName = $("#editTemplate").combobox("getText");
+
+            $("#templateName").val(templateName);
+            $('#edit_list_name').dialog('open');
+        }
+
+        //保存模板名称
+        function saveTemplateName(){
+            var newName= $("#templateName").val();
+            newName = $.trim(newName);
+            if(newName==''){
+                layer.alert('请输入模板新名称！', {icon: 0, title: "提示"});
+                return ;
+            }else{
+                $("#editTemplate").combobox("setText",newName);
+            }
+            saveTem();
+            $('#edit_list_name').dialog('close');
+        }
 
     </script>
 

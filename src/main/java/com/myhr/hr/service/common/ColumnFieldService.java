@@ -28,4 +28,6 @@ public interface ColumnFieldService {
      * @param userId 登陆人id
      * */
     BaseResponse queryUserColumnFieldMap(Long fieldTemplateUserId, Long userId);
+
+    BaseResponse updateColumnFieldTemplateUser(ColumnFieldTemplateUserDto columnFieldTemplateUserDto, Long userId);
 }

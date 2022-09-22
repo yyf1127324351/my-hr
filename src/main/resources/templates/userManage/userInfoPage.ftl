@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>员工信息管理</title>
     <#include "/common/common.ftl"/>
-    <script type="text/javascript" src="/static/common/common.js?v=${v}"></script>
+    <script type="text/javascript" src="/static/common/sys/common.js?v=${.now?string('hhmmSSsss')}"></script>
 </head>
 <body class="easyui-layout">
 <div data-options="region:'north'" class="panel-fit">
@@ -58,6 +58,7 @@
 </div>
 <#--设置列模板div-->
 <div id="columnWindow"></div>
+
 
 </body>
 

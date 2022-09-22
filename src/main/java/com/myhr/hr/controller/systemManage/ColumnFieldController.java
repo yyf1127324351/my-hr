@@ -80,7 +80,21 @@ public class ColumnFieldController {
         return mv;
     }
 
-
+    /**
+     * 展示列模板 - 保存
+     *
+     * */
+    @RequestMapping("/updateColumnFieldTemplateUser")
+    @ResponseBody
+    public BaseResponse updateColumnFieldTemplateUser(ColumnFieldTemplateUserDto columnFieldTemplateUserDto){
+        try {
+            Long userId = SessionContainer.getUserId();
+            return columnFieldService.updateColumnFieldTemplateUser(columnFieldTemplateUserDto,userId);
+        } catch (Exception e) {
+            log.error("updateColumnFieldTemplateUserException:" + e.getMessage(), e);
+            return BaseResponse.error();
+        }
+    }
 
 
 

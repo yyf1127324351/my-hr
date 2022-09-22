@@ -28,4 +28,6 @@ public interface ColumnFieldMapper {
     List<ColumnFieldTypeDto> queryAllColumnFiledType(Map<String, Object> paramMap);
 
     List<ColumnFieldDto> queryAllColumnFiled(Map<String, Object> paramMap);
+
+    int updateColumnFieldTemplateUser(ColumnFieldTemplateUserDto columnFieldTemplateUserDto);
 }
