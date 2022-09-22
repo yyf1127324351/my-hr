@@ -47,7 +47,11 @@ public class ColumnFieldServiceImpl implements ColumnFieldService {
         //获取 该模板选中的列属性 和 非选中的列属性 合集
         List<ColumnFieldDto> allList = handleUserColumnFieldAll(fieldTemplateUserId,userId);
         if (CollectionUtils.isNotEmpty(allList)) {
+            //员工所选模板
+            ColumnFieldTemplateUserDto filedUser = columnFieldMapper.queryColumnFieldTemplateUserById(fieldTemplateUserId);
+
             Map map = new HashMap();
+            map.put("isDefaultShow", filedUser.getIsDefaultShow());
             //获取模板中选中的列属性
             List<ColumnFieldDto> selectList = allList.stream().filter(e -> e.getHasSelectFlag() == 1).collect(Collectors.toList());
             map.put("selectFields", selectList);

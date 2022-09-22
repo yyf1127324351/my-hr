@@ -12,7 +12,7 @@
 		<div align="center">
 			<table border="0" width="100%" class="search_table">
 				<tr>
-					<td width="20%" align='right'>展示列模板:</td>
+					<td width="19%" align='right'>展示列模板:</td>
 					<td width="15%" align='left'>
                         <input id="editTemplate" class="easyui-combobox" style="width: 180px;">
 					</td>
@@ -22,7 +22,7 @@
                     <td align='left'>
                         <input type="checkbox" id="isDefaultShow" name="isDefaultShow"/>
                     </td>
-					<td width="45%" align='right'>
+					<td width="45%" align='center'>
 						<a href="javascript:saveTem();" class="sel_btn ch_cls">保存</a>
 						<a href="javascript:editTem();" class="sel_btn ch_cls">修改模板名称</a>
 					</td>
@@ -165,8 +165,7 @@
 
                 },
                 onSelect: function (node) {
-
-
+                    initColumnFieldShow(node.id)
                 }
             });
 
@@ -184,6 +183,13 @@
                     if (result.code == 200) {
                         var noshowField = result.data.noSelectFields;
                         var showField = result.data.selectFields;
+                        var isDefaultShow = result.data.isDefaultShow;
+                        if (isDefaultShow == 1) {
+                            $("#isDefaultShow").prop("checked", true)
+                        }else {
+                            $("#isDefaultShow").prop("checked", false)
+                        }
+
                         $("#noshow_select").html("");
                         $("#show_select").html("");
                         for(var i=0;noshowField!=null&&i<noshowField.length;i++){
