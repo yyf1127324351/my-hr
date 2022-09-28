@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>员工信息管理</title>
     <#include "/common/common.ftl"/>
-    <script type="text/javascript" src="/static/common/sys/common.js?v=${.now?string('hhmmSSsss')}"></script>
+    <script type="text/javascript" src="/static/js/common.js?v=${.now?string('hhmmSSsss')}"></script>
 </head>
 <body class="easyui-layout">
 <div data-options="region:'north'" class="panel-fit">
@@ -60,6 +60,33 @@
 <div id="columnWindow"></div>
 
 
+<div style="display:none">
+    <div id="addEditDialog" class="dialog">
+        <form>
+            <input type="hidden" name="id" id="id" />
+            <input type="hidden" name="inductionTeacherId" id="inductionTeacherId"/>
+            <input type="hidden" name="reportLeaderId" id="reportLeaderId"/>
+            <table style="width:95%;margin:10px 10px 10px 10px;">
+                <tbody>
+                <tr>
+                    <th><span style="color:red;">*</span>入职导师：</th>
+                    <td>
+                        <input type="text" name="inductionTeacherName" id="inductionTeacherName" style="width:350px;" />
+                    </td>
+                </tr>
+                <tr>
+                    <th><span style="color:red;">*</span>汇报对象：</th>
+                    <td>
+                        <input type="text" name="reportLeaderName" id="reportLeaderName" style="width:350px;"/>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+
+
 </body>
 
 <script type="text/javascript">
@@ -71,6 +98,15 @@
                 queryList();
             }
         };
+
+        $("#inductionTeacherName").userbox({
+            valueSelector: '#inductionTeacherId',
+        });
+
+        $("#reportLeaderName").userbox({
+            valueSelector: '#reportLeaderId',
+            multiple: true
+        });
 
         $("#template").combobox({
             url : '/columnField/queryColumnFieldTemplateUser?fieldType=1',
@@ -121,7 +157,7 @@
             frozenColumns: [[
                 {title: '操作', field: 'a', width: 80, align: 'center',fixed: false,
                     formatter: function (val, row) {
-                        var html = '<a class="sel_btn ch_cls" href="javascript:editUserRole()" style="text-decoration:none;">编辑</a>';
+                        var html = '<a class="sel_btn ch_cls" href="javascript:edit()" style="text-decoration:none;">编辑</a>';
                         return html;
                     }
                 },
@@ -131,6 +167,39 @@
             ]],
             columns:columns
 
+        });
+
+
+        $("#addEditDialog").dialog({
+            resizable : false,
+            width:'500',
+            height:'160',
+            // width:'38%',
+            // height:'32%',
+            // top: '10%',
+            left: '30%',
+            // iconCls:'icon-edit',
+            close : true,
+            shadow:false,
+            modal:true,
+            buttons:[{
+                text:'保存',
+                iconCls:'icon-ok',
+                handler:function(){
+                    saveOrUpdate();
+                }
+            },{
+                text:'取消',
+                iconCls:'icon-cancel',
+                handler:function(){
+                    $('#addEditDialog').dialog('close');
+                }
+            }],
+            onClose:function(){
+                $("#addEditDialog form").form("reset");
+            },
+            closable: true,
+            closed: true   //已关闭
         });
 
     });
@@ -145,6 +214,58 @@
         var data = getFormData("search_form");
         $('#data_table').datagrid({url: '/userInfo/getUserInfoPageList', queryParams: data});
     }
+
+    //编辑
+    function edit() {
+
+        var row = $("#data_table").datagrid('getSelected');
+
+        $('#addEditDialog').dialog('setTitle','编辑');
+        $('#addEditDialog').dialog('open');
+        $("#id").val(row.id);
+        $("#inductionTeacherId").val(row.inductionTeacherId);
+        $("#reportLeaderId").val(row.reportLeaderId);
+        $("#inductionTeacherName").val(row.inductionTeacherName);
+        $("#reportLeaderName").val(row.reportLeaderName);
+    }
+
+
+    function saveOrUpdate() {
+        var id = $("#id").val();
+        var inductionTeacherName = $("#inductionTeacherName").val();
+        var reportLeaderName = $("#reportLeaderName").val();
+        var inductionTeacherId = $("#inductionTeacherId").val();
+        var reportLeaderId = $("#reportLeaderId").val();
+        if(!inductionTeacherName) {
+            layer.alert("入职导师不能为空", {icon: 5, title: "提示"});
+            return;
+        }else if(!reportLeaderName) {
+            layer.alert("汇报对象不能为空", {icon: 5, title: "提示"});
+            return;
+        }
+
+        $.ajax({
+            type : "POST",
+            url : "/userInfo/saveOrUpdateUserInfo",
+            dataType: "json",
+            data : $("#addEditDialog form").serializeArray(),
+            success : function(data) {
+                if(data.code == 200){
+                    //保存完成之后跳到列表
+                    layer.alert(data.message, {icon: 1, title: "提示"});
+                    $('#addEditDialog').dialog('close');
+                    queryList();
+                }else{
+                    //错误提示
+                    layer.alert(data.message, {icon: 5,title: "提示"});
+                }
+            },
+            error :function(){
+                layer.alert('saveOrUpdateUserInfoError', {icon: 5,title: "提示"});
+            }
+        });
+    }
+
 
 
     function handleColumnField(column,item){

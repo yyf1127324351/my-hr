@@ -30,4 +30,6 @@ public interface UserMapper {
     Long getUserInfoPageCount(HashMap<String, Object> map);
 
     List<UserDto> getUserInfoPageList(HashMap<String, Object> map);
+
+    int updateUserInfo(UserDto userDto);
 }

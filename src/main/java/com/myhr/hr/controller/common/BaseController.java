@@ -30,8 +30,7 @@ public class BaseController {
 				String key = (String) key1;
 				Object value = req.get(key);
 				Object v;
-				if ((value.getClass().isArray())
-						&& (((Object[]) value).length > 0)) {
+				if ((value.getClass().isArray()) && (((Object[]) value).length > 0)) {
 					if (((Object[]) value).length > 1) {
 						v = value;
 					} else {
@@ -45,6 +44,9 @@ public class BaseController {
 					if (s.length() > 0) {
 						p.put(key, s);
 					}
+				}else if (value.getClass().isArray()){
+					key = key.substring(0, key.length() - 2);
+					p.put(key, v);
 				}
 			}
 			hashMap.putAll(p);

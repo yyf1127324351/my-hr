@@ -1,9 +1,12 @@
 package com.myhr.hr.controller.userManage;
 
 import com.myhr.common.BaseResponse;
+import com.myhr.common.SessionContainer;
 import com.myhr.hr.controller.common.BaseController;
+import com.myhr.hr.model.UserDto;
 import com.myhr.hr.service.userManage.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,5 +49,31 @@ public class UserInfoManageController extends BaseController{
         }
 
     }
+
+    @RequestMapping("/queryUserSearch")
+    @ResponseBody
+    public BaseResponse queryUserSearch(HttpServletRequest request) {
+        HashMap<String, Object> map = getParametersMap(request);
+        return userService.getUserInfoPageList(map);
+    }
+
+
+    /**
+     * 员工信息管理-编辑
+     * */
+    @RequestMapping("/saveOrUpdateUserInfo")
+    @ResponseBody
+    public BaseResponse saveOrUpdateUserInfo(UserDto userDto) {
+        if (userDto.getInductionTeacherId() == null || StringUtils.isBlank(userDto.getReportLeaderId())) {
+            return BaseResponse.paramError("参数不正确！");
+        }
+        try {
+            return userService.saveOrUpdateUserInfo(userDto, SessionContainer.getUserId());
+        } catch (Exception e) {
+            log.error("saveOrUpdateUserInfoException:" + e.getMessage(), e);
+            return BaseResponse.error("操作异常");
+        }
+    }
+
 
 }

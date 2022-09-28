@@ -13,4 +13,6 @@ public interface UserService {
     UserDto queryUserById(Long userId);
 
     BaseResponse getUserInfoPageList(HashMap<String, Object> map);
+
+    BaseResponse saveOrUpdateUserInfo(UserDto userDto, Long updateUser);
 }

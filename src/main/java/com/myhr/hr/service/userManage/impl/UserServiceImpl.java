@@ -8,6 +8,7 @@ import com.myhr.hr.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,22 @@ public class UserServiceImpl implements UserService {
         baseResponse.setRows(list);
 
         return baseResponse;
+    }
+
+    @Override
+    public BaseResponse saveOrUpdateUserInfo(UserDto userDto, Long updateUser) {
+        if (null != userDto.getId()) {
+            //更新
+            userDto.setUpdateTime(new Date());
+            userDto.setUpdateUser(updateUser);
+            userMapper.updateUserInfo(userDto);
+            return BaseResponse.success("更新成功");
+        }else {
+            return BaseResponse.success("更新成功");
+        }
+
+
+
     }
 
 }
