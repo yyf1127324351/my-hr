@@ -1,0 +1,19 @@
+package com.myhr.hr.model;
+
+import lombok.Data;
+
+/**
+ * @Description 岗位实体类
+ */
+@Data
+public class JobDto extends BaseDto {
+    private Long id;
+    private Long jobId;
+    private String jobName;
+    private Long jobNameId;
+    private String startDate;
+    private String endDate;
+
+
+
+}

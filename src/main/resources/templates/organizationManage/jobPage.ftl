@@ -35,10 +35,10 @@
         <table class="button_table">
             <tr>
                 <td style="height: 20px;">
-                    <a class="easyui-linkbutton toolButton" data-options="iconCls:'fa fa-plus'" onclick="openAddDialog()">新增</a>
+                    <a class="sel_btn ch_cls" onclick="openAddDialog()">新增</a>
                 </td>
                 <td style="height: 20px;">
-                    <a class="easyui-linkbutton toolButton" data-options="iconCls:'fa fa-plus'" onclick="openEditDialog()">编辑</a>
+                    <a class="sel_btn ch_cls" onclick="exportJob()">导出</a>
                 </td>
             </tr>
         </table>
@@ -46,6 +46,38 @@
     <table id="data_table" style="height: 100%;"></table>
 </div>
 
+
+<div style="display:none">
+    <div id="addEditDialog" class="dialog">
+        <form>
+            <input type="hidden" id="id"/>
+            <table style="width:95%;margin:10px 10px 10px 10px;">
+                <tr style="height:30px;">
+                    <td style="width: 80px;text-align:right;" >岗位名称:<font size="3" color="red">*</font></td>
+                    <td style="align:center;">
+                        <input id="userName" class="easyui-textbox" style="width: 200px;" data-options="required:true" />
+                    </td>
+                    <td style="width: 80px;text-align:right;">岗位名称:<font size="3" color="red">*</font></td>
+                    <td style="align:center;">
+                        <input id="roleIds" class="easyui-combobox" type="text" style="width: 200px;" data-options="required:true"/>
+                    </td>
+                </tr>
+                <tr style="height:30px;">
+                    <td style="width: 80px;text-align:right;">生效日期:<font size="3" color="red">*</font></td>
+                    <td style="align:center">
+                        <input  class="easyui-datebox" data-options="editable:false,required:true" name="startDate2" id="startDate2"  style="width: 200px;">
+                    </td>
+                    <td style="width: 80px;text-align:right;">失效日期:<font size="3" color="red">*</font></td>
+                    <td style="align:center">
+                        <input  class="easyui-datebox" data-options="editable:false,required:true" name="unEffectiveDate2" id="unEffectiveDate2"  style="width: 200px;"  >
+                    </td>
+                </tr>
+
+
+            </table>
+        </form>
+    </div>
+</div>
 
 
 </body>
@@ -60,7 +92,7 @@
 
         $("#data_table").datagrid({
             queryParams: getFormData("searchForm"), //参数
-            url: '/userAccount/getUserAccountPageList',
+            url: '/job/queryJobPageList',
             method: 'post',
             loadMsg: "数据装载中,请稍等....",
             nowrap: true, //单元格内容是否可换行
@@ -77,23 +109,65 @@
             frozenColumns: [[
                 {title: '操作', field: 'id', width: 80, align: 'center',fixed: false,
                     formatter: function (val, row) {
-                        var html = '<a class="sel_btn ch_cls" href="javascript:editUserRole()" style="text-decoration:none;">配置角色</a>';
+                        var html = '<a class="sel_btn ch_cls" href="javascript:editUserRole()" style="text-decoration:none;">编辑</a>';
                         return html;
                     }
                 },
-                {title: '工号', field: 'userId', width: 100, align: 'center'},
-                {title: '花名', field: 'userName', width: 150, align: 'center'},
-                {title: '账号', field: 'loginName', width: 150, align: 'center'}
+                {title: '岗位ID', field: 'jobId', width: 100, align: 'center'},
+                {title: '岗位名称', field: 'jobName', width: 200, align: 'center'}
             ]],
             columns: [[
 
-                {title: '角色', field: 'userRoleNames', width: 130, align: 'center'}
+                {title: '生效日期', field: 'startDate', width: 150, align: 'center'},
+                {title: '失效日期', field: 'endDate', width: 150, align: 'center'}
             ]]
 
 
         });
 
+
+        $("#addEditDialog").dialog({
+            title:'新增',
+            width:'700',
+            height:'250',
+            resizable : false,
+            left: '20%',
+            close : true,
+            shadow:false,
+            modal:true,
+            buttons:[{
+                text:'提交',
+                iconCls:'icon-ok',
+                handler:function(){
+                    saveOrUpdateJob();
+                }
+            },{
+                text:'取消',
+                iconCls:'icon-cancel',
+                handler:function(){
+                    $('#addEditDialog').dialog('close');
+                }
+            }],
+            onClose:function(){
+                $("#addEditDialog form").form("reset");
+            },
+            closable: true,
+            closed: true   //已关闭
+        });
+
     });
+
+    function queryList() {
+        var data = getFormData("search_form");
+        $('#data_table').datagrid({url: '/job/queryJobPageList', queryParams: data});
+    }
+
+    //新增岗位
+    function openAddDialog() {
+
+        $('#addEditDialog').dialog('setTitle','新增岗位');
+        $('#addEditDialog').dialog('open');
+    }
 </script>
 
 </html>
