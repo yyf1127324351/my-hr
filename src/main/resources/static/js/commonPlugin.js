@@ -138,7 +138,7 @@ $.fn.extend({
         }
 
         var $span = $('<span class="userbox-wrapper" style="position:relative;">' +
-            '<span class="userbox-remove" style="position: absolute; background: #fff; line-height: 1.3; right: 1px; top: 0.3px; cursor: pointer; width: 1.8em; text-align: center;">&times;</span>' +
+            '<span class="userbox-remove" style="position: absolute; line-height: 1.15; right: 1px; top: 0.15px; cursor: pointer; width: 1.6em; text-align: center;">&times;</span>' +
             '</span>');
         $span.insertBefore($this);
         $span.find(".userbox-remove").on("click", function() {
@@ -154,6 +154,45 @@ $.fn.extend({
         $this.on('click', function() {
             userDialog(options);
         });
+    },
+    jobNameBox: function (options) {
+        var $this = this;
+
+        if($this.selector && typeof($this.selector) !== 'string') {
+            console.warn('必须使用选择器！');
+            return false;
+        }
+
+        var options = $.extend(true, {}, {
+            valueSelector: null,
+            textSelector: $this.selector,
+            valueField: 'id',
+            textField: 'jobName',
+            values: [],
+            multiple: false,
+            multipleSeparator: ',',
+            onSelect: $.noop,
+            onClear: $.noop
+        }, options);
+
+        var $span = $('<span class="jobNameBox-wrapper" style="position:relative;">' +
+            '<span class="jobNameBox-remove" style="position: absolute; line-height: 1.15; right: 1px; top: 0.15px; cursor: pointer; width: 1.6em; text-align: center;">&times;</span>' +
+            '</span>');
+        $span.insertBefore($this);
+        $span.find(".jobNameBox-remove").on("click", function() {
+            $this.val(null);
+            $(options.valueSelector).val(null);
+            $(options.textSelector).val(null);
+            options.onClear.call($this[0]);
+        });
+        $span.append($this);
+        $this.attr('readonly', 'readonly');
+        $this.addClass('jobName-box');
+        $this.css("outline", "none");
+        $this.on('click', function() {
+            jobNameDialog(options);
+        });
+
     }
 
 
@@ -389,6 +428,246 @@ function userDialog(options) {
 
     $("#"+ selectUserListId).on("click", ".user-item-del", function() {
         var item = $(this).closest(".user-item");
+        var id = item.data("id");
+        var rows = $("#" + tableId).datagrid("getSelections");
+        $.each(rows, function() {
+            if(this.id == id) {
+                var rowIndex = $("#" + tableId).datagrid("getRowIndex", this);
+                if(rowIndex >= 0) {
+                    $("#" + tableId).datagrid("unselectRow", rowIndex);
+                }
+            }
+        });
+        item.remove();
+    });
+}
+
+
+function jobNameDialog(options) {
+    if(window.jobNameDialogId) {
+        console.warn("已弹出一个用户选择框！");
+        return;
+    }
+
+    options = $.extend(true, {}, {
+        valueSelector: null,
+        textSelector: null,
+        valueField: 'id',
+        textField: 'jobName',
+        values: [],
+        multiple: false,
+        multipleSepartor: ',',
+        onSelect: $.noop
+    }, options);
+
+    if(!options.defaultParams) {
+        options.defaultParams = {
+            // 'status': '1'
+        };
+    }
+
+    if(options.valueSelector) {
+        var val = $(options.valueSelector).val();
+        if(!options.multiple) {
+            if($.isNumeric(val) && options.values.length == 0) {
+                options.values = [ val.trim() ];
+            }
+        }else if(val && options.values.length == 0) {
+            options.values = $.map(val.split(options.multipleSeparator), function(e) { return e * 1; });
+        }
+    }
+
+    var mapping = {};
+    if(options.valueSelector) {
+        mapping[options.valueSelector] = options.valueField;
+    }
+    if(options.textSelector) {
+        mapping[options.textSelector] = options.textField;
+    }
+
+    var id = (Math.random() * 10000000).toFixed(0);
+    var dialogId = "jobName-dialog-" + id;
+    var formId = "jobName-form-" + id;
+    var tableId = "jobName-table-" + id;
+    var pageId = "jobName-pagination-" + id;
+    var selectJobNameListId = "jobName-select-list-" + id;
+
+    var southHeight = options.multiple ? 100 : 35;
+
+    var defaultInput = [];
+    $.each(options.defaultParams, function(key, value) {
+        defaultInput.push('<input type="hidden" name="' + key + '" value="' + value + '"/>')
+    });
+    window.jobNameDialogId = dialogId;
+    $("body").append('<div id="' +  dialogId + '" class="user-dialog">' +
+        '<div class="easyui-layout" style="width:100%;height:100%;">' +
+        '<div region="north" border="false" class="panel-fit" style="height: auto;padding:5px 0 0;">' +
+        '<form id="' + formId + '">' + defaultInput.join("") +
+        '   <div class="search-row">' +
+        '       <div class="form-group"><label class="search-label">岗位名称：</label><input id="jobNameBox-name-'+ id +'" name="jobName" class="easyui-textbox" type="text" style="width: 380px;" /></div>' +
+        '       <div class="form-group"><a class="easyui-linkbutton search-btn" data-options="iconCls:\'fa fa-search\'" style="height:22px;width: 80px;">搜索</a></div>' +
+        '   </div>' +
+        '</form>' +
+        '</div>' +
+        '<div region="south" border="false" style="height:'+ southHeight +'px;padding:3px;overflow: hidden;">' +
+        '<div id="' + pageId +'"style="border: 1px solid #ddd;" class="easyui-pagination"></div>' +
+        '<div class="clearfix panel-body">' +
+        '   <div id="' + selectJobNameListId +'" style="height:60px;width:425px;float: left;overflow: auto;"></div>' +
+        '   <a class="easyui-linkbutton ok-btn" data-options="iconCls:\'icon-ok\'" style="padding: 5px; margin: 15px;float: right;">确定</a>' +
+        '</div>' +
+        '</div>' +
+        '<div region="center" border="false" style="padding:5px 5px;user-select: none;"><table id="' + tableId +'" style="height: 100%;"></table></div>' +
+        '</div></div>');
+    if(options.values.length > 0) {
+        var data = $.extend({}, options.defaultParams);
+        switch(options.valueField) {
+            case 'id':
+                data['jobNameIds'] = options.values;
+                break;
+            default:
+                console.warn('暂时只支持id的valueField');
+        }
+        $.ajax({
+            url: "/jobName/queryJobNamePageList",
+            type: 'POST',
+            data: data,
+            dataType: 'json',
+            async: true,
+            success: function (ret) {
+                $.each(ret.rows, function() {
+                    var item = $('<div class="jobName-item" style="display: inline-block;padding: 4px; background: #AACCFF;margin:2px; border-radius: 3px;">' + this.jobName +
+                        ' <a href="javascript:void(0);" class="jobName-item-del" style="text-decoration: none;">&times;</a>' +
+                        '</div>');
+                    item.data("id", this.id);
+                    item.data("jobName", this);
+                    $("#" + selectJobNameListId).append(item);
+                });
+            }
+        });
+    }
+
+    $("#" + dialogId).find(".easyui-textbox").textbox();
+    $("#" + dialogId).find(".easyui-linkbutton").linkbutton();
+    $("#" + dialogId).find(".search-btn").on("click", function() {
+        $("#" + tableId).trigger("search");
+    });
+
+    $("#" + dialogId).find(".ok-btn").on("click", function() {
+        var users = [];
+        $("#" + selectJobNameListId + " .user-item").each(function() {
+            users.push($(this).data("user"));
+        });
+
+        if(options.onSelect) {
+            options.onSelect.call($("#" + dialogId)[0], users);
+        }
+
+        $.each(mapping, function(key, value) {
+            var v = $.map(users, function(e) {
+                return e[value];
+            }).join(options.multipleSepartor);
+            $(key).val(v);
+        });
+        $("#" + dialogId).dialog("close");
+    });
+
+    $("#" + dialogId).find(".easyui-layout").layout();
+    $("#" + dialogId).dialog({
+        title:'岗位名称选择' + (options.multiple ? "" : "&nbsp;(双击选中)"),
+        width: 550,
+        height: (options.multiple ? 470 : 420),
+        iconCls:'icon-man',
+        shadow:false,
+        modal:true,
+        onOpen: function() {
+            $("#jobNameBox-name-" + id).textbox('textbox').focus();
+            var isFirst = true;
+            $("#" + tableId).pagegrid({
+                url: '/jobName/queryJobNamePageList',
+                searchForm: "#" + formId,
+                pagination: "#" + pageId,
+                pageSize: 30,
+                singleSelect: !options.multiple,
+                idField: "id",
+                columns:[[
+                    {field:'id',title:'ID',width: 100,align:'center'},
+                    {field:'jobName',title:'岗位名称',width: 200,align:'center'}
+                ]],
+                onBeforeLoad: function(params) {
+                    if(params["jobName"]) {
+
+                    }else {
+                        if(isFirst) {
+                            isFirst = false;
+                        }else {
+                            $.messager.alert("提示", "岗位名称不能为空！");
+                            $("#" + tableId).datagrid("loadData", { total: 0, rows: []});
+                        }
+                        return false;
+                    }
+                },
+                onSelect: function(rowIndex, rowData) {
+                    var exists = false;
+                    $("#" + selectJobNameListId).find(".jobName-item").each(function() {
+                        var jobNameId = $(this).data("id");
+                        if(jobNameId == rowData.id) {
+                            exists = true;
+                            return false;
+                        }
+                    });
+                    if(!exists) {
+                        var item = $('<div class="jobName-item" style="display: inline-block;padding: 4px; background: #AACCFF;margin:2px; border-radius: 3px;">' + rowData.jobName +
+                            ' <a href="javascript:void(0);" class="jobName-item-del" style="text-decoration: none;">&times;</a>' +
+                            '</div>');
+                        item.data("id", rowData.id);
+                        item.data("jobName", rowData);
+                        $("#" + selectJobNameListId).append(item);
+                    }
+                },
+                onUnselect: function(rowIndex, rowData) {
+                    $("#" + selectJobNameListId).find(".jobName-item").each(function() {
+                        var jobNameId = $(this).data("id");
+                        if(jobNameId == rowData.id) {
+                            $(this).remove();
+                        }
+                    });
+                },
+                onLoadSuccess: function(ret) {
+                    var rows = $("#" + tableId).datagrid("getRows");
+                    $("#" + selectJobNameListId).find(".jobName-item").each(function() {
+                        var jobNameId = $(this).data("id");
+                        $.each(rows, function() {
+                            if(this.id == jobNameId) {
+                                var rowIndex = $("#" + tableId).datagrid("getRowIndex", this);
+                                if(rowIndex >= 0) {
+                                    $("#" + tableId).datagrid("selectRow", rowIndex);
+                                }
+                            }
+                        });
+                    });
+                },
+                onDblClickRow: function(rowIndex, rowData) {
+                    if(!options.multiple) {
+                        if(options.onSelect) {
+                            options.onSelect.call($("#" + dialogId)[0], rowData);
+                        }
+
+                        $.each(mapping, function(key, value) {
+                            $(key).val(rowData[value]);
+                        });
+                        $("#" + dialogId).dialog("close");
+                    }
+                }
+            });
+        },
+        onClose:function() {
+            window.jobNameDialogId = null;
+            $("#" + dialogId).remove();
+        }
+    });
+
+    $("#"+ selectJobNameListId).on("click", ".jobName-item-del", function() {
+        var item = $(this).closest(".jobName-item");
         var id = item.data("id");
         var rows = $("#" + tableId).datagrid("getSelections");
         $.each(rows, function() {

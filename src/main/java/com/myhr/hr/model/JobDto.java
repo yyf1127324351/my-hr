@@ -10,6 +10,7 @@ public class JobDto extends BaseDto {
     private Long id;
     private Long jobId;
     private String jobName;
+    private Integer headcount;//编制人数
     private Long jobNameId;
     private String startDate;
     private String endDate;

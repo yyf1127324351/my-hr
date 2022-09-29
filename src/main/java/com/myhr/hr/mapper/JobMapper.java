@@ -13,4 +13,6 @@ public interface JobMapper {
     Long queryJobPageCount(HashMap<String, Object> map);
 
     List<JobDto> queryJobPageList(HashMap<String, Object> map);
+
+    int addJob(JobDto jobDto);
 }

@@ -13,6 +13,31 @@
             </if>
         </where>
     </sql>
+    <insert id="addJob" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO org_job (
+            job_id,
+            job_name,
+            job_name_id,
+            headcount,
+            start_date,
+            end_date,
+            create_user,
+            create_time
+        )(
+            SELECT
+                (max(job_id) + 1) job_id,
+                #{jobName} job_name,
+                #{jobNameId} job_name_id,
+                #{headcount} headcount,
+                #{startDate} start_date,
+                #{endDate} start_date,
+                #{createUser} create_user,
+                #{createTime} create_time
+            FROM
+                org_job
+        )
+
+    </insert>
 
     <select id="queryJobPageCount" resultType="java.lang.Long">
         select
@@ -27,6 +52,7 @@
           j.job_id as jobId,
           j.job_name as jobName,
           j.job_name_id as jobNameId,
+          j.headcount as headcount,
           j.start_date as startDate,
           j.end_date as endDate
         from org_job j

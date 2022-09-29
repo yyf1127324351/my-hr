@@ -1,7 +1,9 @@
 package com.myhr.hr.controller.organizationManage;
 
 import com.myhr.common.BaseResponse;
+import com.myhr.common.SessionContainer;
 import com.myhr.hr.controller.common.BaseController;
+import com.myhr.hr.model.JobDto;
 import com.myhr.hr.service.organizationManage.JobService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +48,28 @@ public class JobController extends BaseController {
             return jobService.queryJobPageList(map);
         }catch (Exception e){
             log.error("queryJobPageListException:" + e.getMessage(), e);
+            return BaseResponse.error();
+        }
+
+    }
+
+    /**
+     * 岗位管理-新增/更新
+     * */
+    @RequestMapping("/saveOrUpdateJob")
+    @ResponseBody
+    public BaseResponse saveOrUpdateJob(JobDto jobDto){
+        try {
+            Long updateUser = SessionContainer.getUserId();
+            if (null != jobDto.getId()) {
+                //更新
+                return BaseResponse.success();
+            }else {
+                //新增
+                return jobService.addJob(jobDto,updateUser);
+            }
+        }catch (Exception e){
+            log.error("saveOrUpdateJobException:" + e.getMessage(), e);
             return BaseResponse.error();
         }
 

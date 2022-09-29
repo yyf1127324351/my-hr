@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.myhr.hr.mapper.JobNameMapper">
+
+    <sql id="sql_where_job">
+        <where>
+            <if test="id != null ">
+                and j.id = #{id}
+            </if>
+            <if test="jobName != null and jobName != ''">
+                and j.job_name like CONCAT('%', #{jobName}, '%')
+            </if>
+        </where>
+    </sql>
+
+    <select id="queryJobNamePageCount" resultType="java.lang.Long">
+        select
+            count(1)
+        from org_job_name j
+        <include refid="sql_where_job"/>
+
+    </select>
+    <select id="queryJobNamePageList" resultType="com.myhr.hr.model.JobNameDto">
+        select
+          j.id as id,
+          j.job_name as jobName
+        from org_job_name j
+        <include refid="sql_where_job"/>
+        <if test="page !=null ">
+            limit #{start} , #{rows}
+        </if>
+    </select>
+</mapper>

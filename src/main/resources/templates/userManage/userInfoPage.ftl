@@ -69,15 +69,15 @@
             <table style="width:95%;margin:10px 10px 10px 10px;">
                 <tbody>
                 <tr>
-                    <th><span style="color:red;">*</span>入职导师：</th>
+                    <th>入职导师：<span style="color:red;">*</span></th>
                     <td>
-                        <input type="text" name="inductionTeacherName" id="inductionTeacherName" style="width:350px;" />
+                        <input class="easyui-validatebox input_width200 validatebox-text validatebox-invalid"  readonly="readonly" required="true" type="text" name="inductionTeacherName" id="inductionTeacherName" style="width:350px;" />
                     </td>
                 </tr>
                 <tr>
-                    <th><span style="color:red;">*</span>汇报对象：</th>
+                    <th>汇报对象：<span style="color:red;">*</span></th>
                     <td>
-                        <input type="text" name="reportLeaderName" id="reportLeaderName" style="width:350px;"/>
+                        <input class="easyui-validatebox input_width200 validatebox-text validatebox-invalid"  readonly="readonly" required="true" type="text" name="reportLeaderName" id="reportLeaderName" style="width:350px;"/>
                     </td>
                 </tr>
                 </tbody>

@@ -3,11 +3,11 @@ package com.myhr.hr.service.organizationManage.impl;
 import com.myhr.common.BaseResponse;
 import com.myhr.hr.mapper.JobMapper;
 import com.myhr.hr.model.JobDto;
-import com.myhr.hr.model.UserDto;
 import com.myhr.hr.service.organizationManage.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,5 +31,15 @@ public class JobServiceImpl implements JobService {
         baseResponse.setRows(list);
 
         return baseResponse;
+    }
+
+    @Override
+    public BaseResponse addJob(JobDto jobDto, Long updateUser) {
+
+        jobDto.setCreateUser(updateUser);
+        jobDto.setCreateTime(new Date());
+        jobMapper.addJob(jobDto);
+
+        return BaseResponse.success("新增岗位成功");
     }
 }
