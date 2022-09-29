@@ -22,3 +22,4 @@
 <script type="text/javascript" src="/static/common/js/jquery-form.js?v=${.now?string('hhmmSSsss')}"></script>
 
 
+<script type="text/javascript" src="/static/js/common.js?v=${.now?string('hhmmSSsss')}"></script>

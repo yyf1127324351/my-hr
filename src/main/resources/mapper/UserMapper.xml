@@ -117,6 +117,8 @@
         u.company_email as companyEmail,
         u.work_place as workPlace,
         u.staff_type as staffType,
+        u.report_leader_id as reportLeaderId,
+        u.induction_teacher_id as inductionTeacherId,
         u.induction_teacher_name as inductionTeacherName,
         u.report_leader_name as reportLeaderName
         FROM user u
