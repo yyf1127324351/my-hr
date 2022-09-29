@@ -170,6 +170,11 @@
         $('#data_table').datagrid({url: '/job/queryJobPageList', queryParams: data});
     }
 
+    function clearQuery() {
+        $('#search_form').form('clear');
+        queryList();
+    }
+
     //打开新增岗位 窗口
     function openAddDialog() {
         $('#addEditDialog').dialog('setTitle','新增岗位');
