@@ -590,7 +590,7 @@ function jobNameDialog(options) {
                 singleSelect: !options.multiple,
                 idField: "id",
                 columns:[[
-                    {field:'id',title:'ID',width: 100,align:'center'},
+                    {field:'id',title:'岗位名称ID',width: 100,align:'center'},
                     {field:'jobName',title:'岗位名称',width: 200,align:'center'}
                 ]],
                 onBeforeLoad: function(params) {
