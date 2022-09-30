@@ -11,9 +11,11 @@
     cursor: pointer;
     color: #fdffff;
     text-decoration: none;
-}
-.ch_cls {
     background: #3498db;
+}
+
+.a_margin {
+    margin-right: 2px;
 }
 .search-label { display: inline-block; min-width: 0px; text-align: right; font-weight: bold; padding-left: 5px; }
 .search-row { margin: 2px 0; }

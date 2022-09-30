@@ -145,18 +145,18 @@
             onLoadSuccess: function (data) {
             },
             frozenColumns: [[
-                {title: '操作', field: 'id', width: 300, align: 'center',
+                {title: '操作', field: 'id', align: 'center',fixed: true,
                     formatter: function (val, row) {
                         var html = "";
                         var status = row.status;
                         var id = row.id;
                         if (status == 1){
-                            html = html + '<a class="sel_btn ch_cls" href="javascript:offUseRole(' + id + ')" style="text-decoration:none;">停用</a>&nbsp;';
-                            html = html + '<a class="sel_btn ch_cls" href="javascript:editInfo(' + id + ')" style="text-decoration:none;">编辑</a>&nbsp;';
-                            html = html + '<a class="sel_btn ch_cls" href="javascript:authEdit(' + id + ')" style="text-decoration:none;">分配权限</a>&nbsp;';
-                            html = html + '<a class="sel_btn ch_cls" href="javascript:authFieldEdit(' + id + ')" style="text-decoration:none;">分配列属性权限</a>';
+                            html = html + '<a class="sel_btn a_margin" href="javascript:offUseRole(' + id + ')" >停用</a>';
+                            html = html + '<a class="sel_btn a_margin" href="javascript:editInfo(' + id + ')" >编辑</a>';
+                            html = html + '<a class="sel_btn a_margin" href="javascript:authEdit(' + id + ')">分配权限</a>';
+                            html = html + '<a class="sel_btn a_margin" href="javascript:authFieldEdit(' + id + ')" >分配列属性权限</a>';
                         }else {
-                            html = html + '<a class="sel_btn ch_cls" href="javascript:onUseRole(' + id + ')" style="text-decoration:none;">启用</a>';
+                            html = html + '<a class="sel_btn a_margin" href="javascript:onUseRole(' + id + ')">启用</a>';
                         }
                         return html;
                     }

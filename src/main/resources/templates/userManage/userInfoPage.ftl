@@ -157,7 +157,7 @@
             frozenColumns: [[
                 {title: '操作', field: 'a', width: 80, align: 'center',fixed: false,
                     formatter: function (val, row) {
-                        var html = '<a class="sel_btn ch_cls" href="javascript:edit()" style="text-decoration:none;">编辑</a>';
+                        var html = '<a class="sel_btn " href="javascript:edit()" style="text-decoration:none;">编辑</a>';
                         return html;
                     }
                 },

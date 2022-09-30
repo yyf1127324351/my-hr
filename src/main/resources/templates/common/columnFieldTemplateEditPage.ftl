@@ -23,8 +23,8 @@
                         <input type="checkbox" id="isDefaultShow" name="isDefaultShow"/>
                     </td>
 					<td width="45%" align='center'>
-						<a href="javascript:saveTem();" class="sel_btn ch_cls">保存</a>
-						<a href="javascript:editTem();" class="sel_btn ch_cls">修改模板名称</a>
+						<a href="javascript:saveTem();" class="sel_btn ">保存</a>
+						<a href="javascript:editTem();" class="sel_btn ">修改模板名称</a>
 					</td>
 				</tr>
 			</table>

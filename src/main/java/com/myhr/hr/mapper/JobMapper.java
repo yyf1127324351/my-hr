@@ -15,4 +15,6 @@ public interface JobMapper {
     List<JobDto> queryJobPageList(HashMap<String, Object> map);
 
     int addJob(JobDto jobDto);
+
+    int querySameJobCount(JobDto jobDto);
 }

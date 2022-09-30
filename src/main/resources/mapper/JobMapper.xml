@@ -61,4 +61,22 @@
             limit #{start} , #{rows}
         </if>
     </select>
+    <select id="querySameJobCount" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM org_job
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="jobNameId != null">
+                and job_name_id = #{jobNameId}
+            </if>
+            <if test="endDate != null">
+                <![CDATA[ and start_date <= #{endDate} ]]>
+            </if>
+            <if test="startDate != null">
+                and end_date >= #{startDate}
+            </if>
+        </where>
+    </select>
 </mapper>

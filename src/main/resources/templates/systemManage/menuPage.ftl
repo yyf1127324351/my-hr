@@ -249,7 +249,7 @@
                 //     formatter: function (val, row) {
                 //         var id = row.id;
                 //         var html = "";
-                //         html = html + '<a class="sel_btn ch_cls" onclick="editMenu()" style="text-decoration:none;">编辑</a>';
+                //         html = html + '<a class="sel_btn " onclick="editMenu()" style="text-decoration:none;">编辑</a>';
                 //         return html;
                 //     }
                 // },

@@ -36,10 +36,10 @@
         <table class="button_table">
             <tr>
                 <td style="height: 20px;">
-                    <a class="sel_btn ch_cls" onclick="openAddDialog()">新增</a>
+                    <a class="sel_btn " onclick="openAddDialog()">新增</a>
                 </td>
                 <td style="height: 20px;">
-                    <a class="sel_btn ch_cls" onclick="exportJob()">导出</a>
+                    <a class="sel_btn " onclick="exportJob()">导出</a>
                 </td>
             </tr>
         </table>
@@ -114,9 +114,10 @@
             onLoadSuccess: function (data) {
             },
             frozenColumns: [[
-                {title: '操作', field: 'id', width: 80, align: 'center',fixed: false,
+                {title: '操作', field: 'id', align: 'center',fixed: true,
                     formatter: function (val, row) {
-                        var html = '<a class="sel_btn ch_cls" href="javascript:editUserRole()" style="text-decoration:none;">编辑</a>';
+                        var html = '<a class="sel_btn a_margin" href="javascript:openEditDialog()" >编辑</a>';
+                        html = html + '<a class="sel_btn a_margin" href="javascript:openChangeDialog()">变更</a>';
                         return html;
                     }
                 },

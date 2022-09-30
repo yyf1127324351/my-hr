@@ -139,7 +139,7 @@
             frozenColumns: [[
                 {title: '操作', field: 'id', width: 80, align: 'center',fixed: false,
                     formatter: function (val, row) {
-                        var html = '<a class="sel_btn ch_cls" href="javascript:editUserRole()" style="text-decoration:none;">配置角色</a>';
+                        var html = '<a class="sel_btn " href="javascript:editUserRole()" style="text-decoration:none;">配置角色</a>';
                         return html;
                     }
                 },

@@ -304,10 +304,10 @@
                         var id = row.id;
                         var typeId = row.typeId;
                         if (status == 1){
-                            html = html + '<a class="sel_btn ch_cls" onclick="offUse(' + id + ',' + typeId + ')" style="text-decoration:none;">停用</a>&nbsp;';
-                            html = html + '<a class="sel_btn ch_cls" onclick="openEdit(' + index + ')" style="text-decoration:none;">编辑</a>';
+                            html = html + '<a class="sel_btn " onclick="offUse(' + id + ',' + typeId + ')" style="text-decoration:none;">停用</a>&nbsp;';
+                            html = html + '<a class="sel_btn " onclick="openEdit(' + index + ')" style="text-decoration:none;">编辑</a>';
                         }else {
-                            html = html + '<a class="sel_btn ch_cls" onclick="onUse(' + id + ',' + typeId + ')" style="text-decoration:none;">启用</a>';
+                            html = html + '<a class="sel_btn " onclick="onUse(' + id + ',' + typeId + ')" style="text-decoration:none;">启用</a>';
                         }
                         return html;
                     }
