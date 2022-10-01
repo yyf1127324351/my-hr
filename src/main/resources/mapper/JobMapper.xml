@@ -13,7 +13,7 @@
             </if>
         </where>
     </sql>
-    <insert id="addJob" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertJob" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO org_job (
             job_id,
             job_name,
@@ -38,6 +38,54 @@
         )
 
     </insert>
+    <insert id="insertJobWithJobId">
+        insert into org_job (
+          job_id,
+          job_name,
+          job_name_id,
+          headcount,
+          start_date,
+          end_date,
+          create_user,
+          create_time
+        ) values
+        (
+        #{jobId},#{jobName},#{jobNameId},#{headcount},#{startDate},#{endDate},#{createUser},#{createTime}
+        )
+    </insert>
+    <update id="updateJob">
+        UPDATE org_job
+        <set>
+            <if test="jobId != null">
+                job_id = #{jobId},
+            </if>
+            <if test="jobName != null and jobName != ''">
+                job_name = #{jobName},
+            </if>
+            <if test="jobNameId != null">
+                job_name_id = #{jobNameId},
+            </if>
+            <if test="headcount != null">
+                headcount = #{headcount},
+            </if>
+            <if test="startDate != null and startDate != ''">
+                start_date = #{startDate},
+            </if>
+            <if test="endDate != null and endDate != ''">
+                end_date = #{endDate},
+            </if>
+            <if test="deleted != null">
+                deleted = #{deleted},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
 
     <select id="queryJobPageCount" resultType="java.lang.Long">
         select
@@ -57,19 +105,21 @@
           j.end_date as endDate
         from org_job j
         <include refid="sql_where_job"/>
+        order by j.create_time desc
         <if test="page !=null ">
             limit #{start} , #{rows}
         </if>
+
     </select>
     <select id="querySameJobCount" resultType="java.lang.Integer">
         SELECT count(1)
         FROM org_job
         <where>
             <if test="id != null">
-                id = #{id}
+                id != #{id}
             </if>
-            <if test="jobNameId != null">
-                and job_name_id = #{jobNameId}
+            <if test="jobId != null">
+                and job_id = #{jobId}
             </if>
             <if test="endDate != null">
                 <![CDATA[ and start_date <= #{endDate} ]]>
@@ -78,5 +128,17 @@
                 and end_date >= #{startDate}
             </if>
         </where>
+    </select>
+    <select id="queryJobById" resultType="com.myhr.hr.model.JobDto">
+        select
+            j.id as id,
+            j.job_id as jobId,
+            j.job_name as jobName,
+            j.job_name_id as jobNameId,
+            j.headcount as headcount,
+            j.start_date as startDate,
+            j.end_date as endDate
+        from org_job j
+        WHERE j.id = #{id}
     </select>
 </mapper>

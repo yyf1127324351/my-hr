@@ -11,9 +11,13 @@ public class JobDto extends BaseDto {
     private Long jobId;
     private String jobName;
     private Integer headcount;//编制人数
+    private Integer isValid; //是否有效 1有效 0无效
     private Long jobNameId;
     private String startDate;
     private String endDate;
+
+
+    private Boolean isChangeOperation;
 
 
 

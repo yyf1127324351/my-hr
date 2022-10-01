@@ -9,4 +9,8 @@ public interface JobService {
     BaseResponse queryJobPageList(HashMap<String, Object> map);
 
     BaseResponse addJob(JobDto jobDto, Long updateUser);
+
+    BaseResponse updateJob(JobDto jobDto, Long updateUser);
+
+    BaseResponse changeJob(JobDto jobDto, Long updateUser);
 }

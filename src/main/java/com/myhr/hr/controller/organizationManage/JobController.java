@@ -61,12 +61,17 @@ public class JobController extends BaseController {
     public BaseResponse saveOrUpdateJob(JobDto jobDto){
         try {
             Long updateUser = SessionContainer.getUserId();
-            if (null != jobDto.getId()) {
-                //更新
-                return BaseResponse.success();
+            if (null != jobDto.getIsChangeOperation() && jobDto.getIsChangeOperation()) {
+                //变更
+                return jobService.changeJob(jobDto,updateUser);
             }else {
-                //新增
-                return jobService.addJob(jobDto,updateUser);
+                if (null != jobDto.getId()) {
+                    //更新
+                    return jobService.updateJob(jobDto,updateUser);
+                }else {
+                    //新增
+                    return jobService.addJob(jobDto,updateUser);
+                }
             }
         }catch (Exception e){
             log.error("saveOrUpdateJobException:" + e.getMessage(), e);
