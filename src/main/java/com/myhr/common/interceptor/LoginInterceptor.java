@@ -2,10 +2,13 @@ package com.myhr.common.interceptor;
 
 import com.myhr.common.SessionContainer;
 import com.myhr.common.constant.RedisConstant;
-import com.myhr.hr.service.userManage.UserService;
 import com.myhr.hr.service.redis.RedisService;
+import com.myhr.hr.service.userManage.UserService;
 import com.myhr.hr.vo.UserVo;
-import com.myhr.utils.*;
+import com.myhr.utils.DateUtils;
+import com.myhr.utils.EncodesUtils;
+import com.myhr.utils.JsonUtils;
+import com.myhr.utils.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
@@ -39,8 +42,6 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Value("${cas.client.login}")
     private String casClientLogin;
 
-    @Autowired
-    RedisUtil redisUtil;
     @Autowired
     UserService userService;
     @Autowired

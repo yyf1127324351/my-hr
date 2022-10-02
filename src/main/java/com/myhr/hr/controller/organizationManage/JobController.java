@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
 import java.util.HashMap;
 
 /**
@@ -76,6 +78,22 @@ public class JobController extends BaseController {
         }catch (Exception e){
             log.error("saveOrUpdateJobException:" + e.getMessage(), e);
             return BaseResponse.error();
+        }
+
+    }
+
+
+    /**
+     * 岗位管理-导出
+     * */
+    @RequestMapping("/exportJob")
+    public void exportJob(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            HashMap<String, Object> map = getParametersMap(request);
+            String fileName = "岗位";
+            jobService.exportJob(map,fileName,request,response);
+        } catch (Exception e) {
+            log.error("exportJobException:" + e.getMessage(), e);
         }
 
     }

@@ -5,10 +5,20 @@ import com.myhr.hr.mapper.JobMapper;
 import com.myhr.hr.model.JobDto;
 import com.myhr.hr.service.organizationManage.JobService;
 import com.myhr.utils.DateUtil;
+import com.myhr.utils.ExportUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +37,7 @@ public class JobServiceImpl implements JobService {
         Long total = jobMapper.queryJobPageCount(map);
         baseResponse.setTotal(total);
         if (total == 0) {
+            baseResponse.setRows(Collections.EMPTY_LIST);
             return baseResponse;
         }
         List<JobDto> list = jobMapper.queryJobPageList(map);
@@ -101,6 +112,45 @@ public class JobServiceImpl implements JobService {
             jobMapper.insertJobWithJobId(jobDto);
         }
         return BaseResponse.success("变更成功");
+    }
+
+    @Override
+    public void exportJob(HashMap<String, Object> map, String fileName, HttpServletRequest request, HttpServletResponse response) {
+        map.put("page", null);
+        map.put("rows", null);
+        List<JobDto> list = queryJobPageList(map).getRows();
+        String title = "岗位ID,岗位名称,编制人数,生效日期,失效日期,岗位名称ID";
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet();
+        for (int i = 0; i < 100; i++) {
+            sheet.setColumnWidth(i, 5000);
+        }
+        XSSFFont font = workbook.createFont();
+        font.setFontHeightInPoints((short) 9);
+        font.setFontName("宋体");
+        font.setBoldweight((short) 700);
+
+        XSSFRow row = sheet.createRow(0);
+
+        ExportUtils.buildCell(row, title, workbook);
+        int index = 1;
+        if (CollectionUtils.isNotEmpty(list)) {
+            CellStyle cellStyle = ExportUtils.centerStyle(workbook, false);
+            for (JobDto model : list) {
+                int cellNum = 0;
+                XSSFRow row1 = sheet.createRow(index);
+                cellNum = ExportUtils.buildCellNew(row1, cellNum, model.getJobId().toString(), cellStyle);
+                cellNum = ExportUtils.buildCellNew(row1, cellNum, model.getJobName(), cellStyle);
+                cellNum = ExportUtils.buildCellNew(row1, cellNum, model.getHeadcount().toString(), cellStyle);
+                cellNum = ExportUtils.buildCellNew(row1, cellNum, model.getStartDate(), cellStyle);
+                cellNum = ExportUtils.buildCellNew(row1, cellNum, model.getEndDate(), cellStyle);
+                cellNum = ExportUtils.buildCellNew(row1, cellNum, model.getJobNameId().toString(), cellStyle);
+
+                index++;
+            }
+        }
+//        ExportUtils.exportExcelFile(workbook, fileName,request,response);
+        ExportUtils.exportExcel(workbook, fileName,request,response);
     }
 
     private BaseResponse checkJobIsExit(JobDto jobDto) {

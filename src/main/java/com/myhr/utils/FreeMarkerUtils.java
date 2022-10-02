@@ -18,9 +18,9 @@ import java.util.Map;
  * 
  * free模板工具
  */
-public class FreeMarkerUtil {
+public class FreeMarkerUtils {
 
-	private static Logger logger = LoggerFactory.getLogger(FreeMarkerUtil.class);
+	private static Logger logger = LoggerFactory.getLogger(FreeMarkerUtils.class);
 
 	private static final Configuration TEXT_CONFIGURATION = new Configuration();
 

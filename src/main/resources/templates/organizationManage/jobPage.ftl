@@ -320,6 +320,11 @@
 
     }
 
+    function exportJob() {
+        var paramData = getFormData("search_form");
+        window.open('/job/exportJob?' + $.param(paramData));
+    }
+
 </script>
 
 </html>
