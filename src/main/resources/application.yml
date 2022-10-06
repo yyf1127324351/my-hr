@@ -17,6 +17,7 @@ spring:
       request-context-attribute: rc
       settings:
         classic_compatible: true
+        number_format: 0.##
       #设置响应的内容类型
       content-type: text/html;charset=utf-8
       suffix: .ftl
