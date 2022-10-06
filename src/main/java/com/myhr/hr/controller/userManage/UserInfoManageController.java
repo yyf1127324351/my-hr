@@ -5,11 +5,13 @@ import com.myhr.common.SessionContainer;
 import com.myhr.hr.controller.common.BaseController;
 import com.myhr.hr.model.UserDto;
 import com.myhr.hr.service.userManage.UserService;
+import com.myhr.utils.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -61,19 +63,47 @@ public class UserInfoManageController extends BaseController{
     /**
      * 员工信息管理-编辑
      * */
-    @RequestMapping("/saveOrUpdateUserInfo")
+    @RequestMapping("/updateUserInfo")
     @ResponseBody
-    public BaseResponse saveOrUpdateUserInfo(UserDto userDto) {
-        if (userDto.getInductionTeacherId() == null || StringUtils.isBlank(userDto.getReportLeaderId())) {
-            return BaseResponse.paramError("参数不正确！");
-        }
+    public BaseResponse updateUserInfo(UserDto userDto) {
         try {
-            return userService.saveOrUpdateUserInfo(userDto, SessionContainer.getUserId());
+            return userService.updateUserInfo(userDto, SessionContainer.getUserId());
         } catch (Exception e) {
-            log.error("saveOrUpdateUserInfoException:" + e.getMessage(), e);
+            log.error("updateUserInfoException:" + e.getMessage(), e);
             return BaseResponse.error("操作异常");
         }
     }
 
+    /**
+     * 人员信息管理-编辑人员信息
+     * */
+    @RequestMapping("/goUserInfoEditPage")
+    public ModelAndView goUserInfoEditPage(@RequestParam("id") Long id) {
+        ModelAndView mv = new ModelAndView("/userManage/userInfoEditPage");
+        String queryDate = DateUtil.getTodayDate();
+        mv.addObject("id", id.toString());
+        mv.addObject("queryDate", queryDate);
+        return mv;
+    }
+
+    /**
+     * 人员信息管理-编辑人员信息-跳转到具体编辑页面
+     * @param pageType 信息类型
+     * @param id 员工id
+     * @param queryDate 查询日期
+     * */
+    @RequestMapping("/goEditInfoPage")
+    public ModelAndView goEditInfoPage(@RequestParam("pageType") String pageType,
+                                    @RequestParam("id") Long id,
+                                    @RequestParam(value = "queryDate", required = true) String queryDate) {
+
+        ModelAndView mv = new ModelAndView();
+        Long updateUser = SessionContainer.getUserId();
+        //根据需要跳转的页面类型，处理员工对应数据
+        userService.handleUserInfo(mv, pageType, id, queryDate,updateUser);
+        mv.setViewName("/userManage/edit" + pageType + "Page");
+        mv.addObject("id", id);
+        return mv;
+    }
 
 }

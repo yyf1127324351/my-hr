@@ -7,6 +7,9 @@
             <if test="userName != null and userName != ''">
                 user_name = #{userName},
             </if>
+            <if test="cnName != null and cnName != ''">
+                cn_name = #{cnName},
+            </if>
             <if test="inductionTeacherId != null and inductionTeacherId != ''">
                 induction_teacher_id = #{inductionTeacherId},
             </if>
@@ -29,20 +32,34 @@
         WHERE id = #{id}
     </update>
 
-    <select id="getUserByMap" resultType="com.myhr.hr.vo.UserVo">
-        select
+    <sql id="select_user_column">
         u.id as id,
         u.id as userId,
+        u.id as userNo,
+        u.cn_name as cnName,
+        u.age as age,
+        u.sex as sex,
+        u.id_card as idCard,
         u.user_name as userName,
-        u.login_name as loginName
+        u.login_name as loginName,
+        u.company_email as companyEmail,
+        u.work_place as workPlace,
+        u.staff_type as staffType,
+        u.report_leader_id as reportLeaderId,
+        u.induction_teacher_id as inductionTeacherId,
+        u.induction_teacher_name as inductionTeacherName,
+        u.report_leader_name as reportLeaderName
+    </sql>
+
+    <select id="getUserByMap" resultType="com.myhr.hr.vo.UserVo">
+        select
+        <include refid="select_user_column"/>
         FROM user u
         WHERE u.login_name = #{loginName}
     </select>
     <select id="queryUserById" resultType="com.myhr.hr.model.UserDto">
         select
-        u.id as id,
-        u.user_name as userName,
-        u.login_name as loginName
+        <include refid="select_user_column"/>
         FROM user u
         WHERE u.id = #{userId}
     </select>
@@ -70,9 +87,7 @@
     </select>
     <select id="getUserAccountPageList" resultType="com.myhr.hr.model.UserRoleDto">
         select
-        u.id as userId,
-        u.user_name as userName,
-        u.login_name as loginName
+        <include refid="select_user_column"/>
         FROM user u
         <include refid="sql_where_UserAccount"/>
         <if test="page !=null ">
@@ -111,16 +126,7 @@
     </select>
     <select id="getUserInfoPageList" resultType="com.myhr.hr.model.UserDto">
         select
-        u.id as id,
-        u.user_name as userName,
-        u.login_name as loginName,
-        u.company_email as companyEmail,
-        u.work_place as workPlace,
-        u.staff_type as staffType,
-        u.report_leader_id as reportLeaderId,
-        u.induction_teacher_id as inductionTeacherId,
-        u.induction_teacher_name as inductionTeacherName,
-        u.report_leader_name as reportLeaderName
+        <include refid="select_user_column"/>
         FROM user u
         <include refid="sql_where_userInfo"/>
         <if test="page !=null ">

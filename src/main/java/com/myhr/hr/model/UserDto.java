@@ -11,6 +11,10 @@ import lombok.Data;
 public class UserDto extends BaseDto{
     private Long id;
     private String userName;
+    private String cnName;
+    private Integer sex;
+    private Integer age;
+    private String idCard;
     private String loginName;
     private String companyEmail;
     private Integer status;

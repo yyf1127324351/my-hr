@@ -1,3 +1,12 @@
+var sexJson = [ {
+    id : 1,
+    description : '男'
+}, {
+    id : 2,
+    description : '女'
+} ];
+
+
 
 function showColumnWindow(fieldType,templateComboboxId) {
     $("#columnWindow").append("<div id='new_columnWindow'></div>");//创建一个临时层，关闭销毁。

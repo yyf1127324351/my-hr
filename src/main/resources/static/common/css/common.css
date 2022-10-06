@@ -14,6 +14,18 @@
     background: #3498db;
 }
 
+.readonly_style>span>input {
+    background: #ccc;
+}
+.readonly_style>span {
+    background: #ccc;
+}
+
+/*input:read-only*/
+/*{*/
+    /*background-color: yellow;*/
+/*}*/
+
 .a_margin {
     margin-right: 2px;
 }
