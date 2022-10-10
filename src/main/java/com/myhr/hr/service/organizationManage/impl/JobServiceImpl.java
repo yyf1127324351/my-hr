@@ -41,9 +41,9 @@ public class JobServiceImpl implements JobService {
             return baseResponse;
         }
         List<JobDto> list = jobMapper.queryJobPageList(map);
+        String queryDate = map.get("queryDate").toString();
         for (JobDto jobDto : list) {
-            String nowDay = DateUtil.getTodayDate();
-            if (DateUtil.isBefore(jobDto.getEndDate(), nowDay)) {
+            if (DateUtil.isBefore(jobDto.getEndDate(), queryDate)) {
                 jobDto.setIsValid(0);
             }
         }
