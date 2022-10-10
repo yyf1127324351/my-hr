@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.myhr.hr.mapper.DepartmentMapper">
+
+    <sql id="select_department_column">
+        d.pkid as pkid,
+        d.id as id,
+        d.name as name,
+        d.parent_id as parentId,
+        d.has_child as hasChild,
+        d.level as level,
+        d.leader_id as leaderId,
+        d.path as path,
+        d.start_date as startDate,
+        d.end_date as endDate
+    </sql>
+
+    <sql id="where_department">
+        <where>
+            d.level > 0
+            <if test="status!=null and status==1">
+                <![CDATA[ and d.start_date<=#{queryDate} and d.end_date>=#{queryDate}]]>
+            </if>
+            <if test="status!=null and status==2">
+                <![CDATA[ and (d.end_date < #{queryDate} or d.start_date > #{queryDate}) ]]>
+            </if>
+            and d.deleted = 0
+        </where>
+    </sql>
+
+
+
+    <select id="queryDepartmentList" resultType="com.myhr.hr.model.DepartmentDto">
+        SELECT
+        <include refid="select_department_column"/>
+        FROM org_department d
+        WHERE d.level > 0 and d.deleted = 0
+        <![CDATA[ and d.start_date<=#{queryDate} and d.end_date>=#{queryDate}]]>
+    </select>
+    <select id="queryTopDepartment" resultType="com.myhr.hr.model.DepartmentDto">
+        SELECT
+        <include refid="select_department_column"/>
+        FROM org_department d
+        WHERE d.level = 0
+        LIMIT 0,1
+    </select>
+    <select id="queryDepartmentPageCount" resultType="java.lang.Long">
+        select
+            count(1)
+        from org_department d
+        <include refid="where_department"/>
+    </select>
+    <select id="queryDepartmentPageList" resultType="com.myhr.hr.model.DepartmentDto">
+        SELECT
+        <include refid="select_department_column"/>
+        FROM org_department d
+        <include refid="where_department"/>
+    </select>
+    <select id="getAllDeptTreeNode" resultType="com.myhr.hr.vo.TreeNode">
+        SELECT
+            d.id as id,
+            d.name as name,
+            d.name as text,
+            d.level as level,
+            d.parent_id as parentId,
+            d.has_child as hasChild
+        FROM org_department d
+        WHERE d.level > 0 and d.deleted = 0
+        <![CDATA[ and d.start_date<=#{queryDate} and d.end_date>=#{queryDate}]]>
+    </select>
+</mapper>

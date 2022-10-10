@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>员工信息管理</title>
+    <title>岗位管理页面</title>
     <#include "/common/common.ftl"/>
     <script type="text/javascript" src="/static/js/common.js?v=${.now?string('hhmmSSsss')}"></script>
     <script type="text/javascript" src="/static/js/commonPlugin.js?v=${.now?string('hhmmSSsss')}"></script>

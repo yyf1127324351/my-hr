@@ -55,6 +55,52 @@ function getFormData(form) {
 }
 
 
+
+Date.prototype.format = function(format){
+    var b = formatDate(this,format);
+    if(dayLightSaving(b)){
+        var adjust = new Date(this.getTime()+3600000);
+        b = formatDate(adjust,format);
+    }
+    return b;
+}
+
+//中国夏令时处理
+function dayLightSaving(dateStr){
+    if((dateStr>='1986-05-03'&&dateStr<='1986-09-14')||
+        (dateStr>='1987-04-11'&&dateStr<='1987-09-13')||
+        (dateStr>='1988-04-09'&&dateStr<='1988-09-11')||
+        (dateStr>='1989-04-15'&&dateStr<='1989-09-17')||
+        (dateStr>='1990-04-14'&&dateStr<='1990-09-16')||
+        (dateStr>='1991-04-13'&&dateStr<='1991-09-15')){
+        return true;
+    }
+    return false;
+}
+
+function formatDate(date,format){
+    var o = {
+        "M+" : date.getMonth()+1,
+        "d+" : date.getDate(),
+        "h+" : date.getHours(),
+        "m+" : date.getMinutes(),
+        "s+" : date.getSeconds(),
+        "q+" : Math.floor((date.getMonth()+3)/3),
+        "S" : date.getMilliseconds()
+    }
+    if(/(y+)/.test(format)){
+        format=format.replace(RegExp.$1,(date.getFullYear()+"").substr(4 - RegExp.$1.length));
+    }
+    for(var k in o){
+        if(new RegExp("("+ k +")").test(format)) {
+            format = format.replace(RegExp.$1,RegExp.$1.length==1 ? o[k] : ("00"+ o[k]).substr((""+ o[k]).length));
+        }
+    }
+    return format;
+}
+
+
+
 // $(function() {
 //     // datagrid数据表格ID
 //     var datagridId = 'data_table';

@@ -3,6 +3,7 @@ package com.myhr.hr.vo;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,13 +21,16 @@ public class TreeNode {
     private Long id;
     private String name;
     private String code;
-    private Integer type;//类型 0菜单 1按钮
     private Long parentId;
     private Integer level; //级别
-    private String url;
     private Integer hasChild;
     private Integer sortNumber;
 
+    //菜单树使用
+    private Integer type;//类型 0菜单 1按钮
+    private String url; //菜单地址
+    //部门树使用
+    private String path;//部门路径
 
     //easyui tree 必需的属性
     private String text;
@@ -59,7 +63,9 @@ public class TreeNode {
                     if (node2.getChildren() == null) {
                         node2.setChildren(new ArrayList<>());
                         node2.setText(node2.getName());
-                        node2.setState(state);// 让父节点显示关闭
+                        if (StringUtils.isNotBlank(state)) {
+                            node2.setState(state);// 让父节点显示关闭
+                        }
                     }
                     node2.getChildren().add(node1);
                     break;
@@ -73,22 +79,22 @@ public class TreeNode {
     }
 
     //填充是否有权限
-    public static void isChecked(List<TreeNode> menuList, List<Long> menuIdList) {
-        for (TreeNode pf : menuList) {
-            if(menuIdList.contains(pf.getId())) {
-                pf.setChecked(true);
+    public static void isChecked(List<TreeNode> list, List<Long> idList) {
+        for (TreeNode node : list) {
+            if(idList.contains(node.getId())) {
+                node.setChecked(true);
             }else {
-                pf.setChecked(false);
+                node.setChecked(false);
             }
         }
     }
 
     //排序
-    public static void sortTreeNode(List<TreeNode> menuList) {
-        menuList.sort(comparing(TreeNode::getSortNumber));
-        for (TreeNode treeNode : menuList) {
-            if (CollectionUtils.isNotEmpty(treeNode.getChildren())) {
-                sortTreeNode(treeNode.getChildren());
+    public static void sortTreeNode(List<TreeNode> list) {
+        list.sort(comparing(TreeNode::getSortNumber));
+        for (TreeNode node : list) {
+            if (CollectionUtils.isNotEmpty(node.getChildren())) {
+                sortTreeNode(node.getChildren());
             }
         }
     }

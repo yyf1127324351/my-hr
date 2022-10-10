@@ -7,6 +7,7 @@ import com.myhr.hr.mapper.*;
 import com.myhr.hr.model.*;
 import com.myhr.hr.service.systemManage.RoleService;
 import com.myhr.hr.vo.TreeNode;
+import com.myhr.utils.DateUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,8 @@ public class RoleServiceImpl implements RoleService {
     SysConfigMapper sysConfigMapper;
     @Autowired
     ColumnFieldMapper columnFieldMapper;
+    @Autowired
+    DepartmentMapper departmentMapper;
 
     @Override
     public BaseResponse getRolePageList(HashMap<String, Object> map) {
@@ -65,9 +68,17 @@ public class RoleServiceImpl implements RoleService {
         List<RoleAuthorityDto> menuAuthList = allAuthIds.stream().filter(e -> e.getType() == 1).collect(Collectors.toList());
         List<Long> menuIds = menuAuthList.stream().map(RoleAuthorityDto::getAuthId).collect(Collectors.toList());
         TreeNode.isChecked(allMenuList, menuIds); //选中有权限的菜单
-        List<TreeNode> menuTreeList = TreeNode.convertToTreeList(allMenuList,"open");
+        List<TreeNode> menuTreeList = TreeNode.convertToTreeList(allMenuList,CommonConstant.TREE_OPEN);
         TreeNode.sortTreeNode(menuTreeList); //菜单排序
+
         //2.部门权限
+        String queryDate = DateUtil.getTodayDate();
+        List<TreeNode> allDeptList = departmentMapper.getAllDeptTreeNode(queryDate);
+        //角色有权限的地区
+        List<RoleAuthorityDto> deptAuthList = allAuthIds.stream().filter(e -> e.getType() == 2).collect(Collectors.toList());
+        List<Long> deptIds = deptAuthList.stream().map(RoleAuthorityDto::getAuthId).collect(Collectors.toList());
+        TreeNode.isChecked(allDeptList, deptIds); //选中有权限的菜单
+        List<TreeNode> deptTreeList = TreeNode.convertToTreeList(allDeptList,CommonConstant.TREE_OPEN);
 
         //3.地区权限
         //查出所有的地区
@@ -85,11 +96,12 @@ public class RoleServiceImpl implements RoleService {
         }
         allAreaList.add(rootArea);
 
-        List<TreeNode> areaTreeList = TreeNode.convertToTreeList(allAreaList,"open");
+        List<TreeNode> areaTreeList = TreeNode.convertToTreeList(allAreaList,CommonConstant.TREE_OPEN);
 
         Map<String, List> treeMap = new HashMap<>();
         treeMap.put("menuTreeData", menuTreeList);
         treeMap.put("areaTreeData", areaTreeList);
+        treeMap.put("deptTreeData", deptTreeList);
 
         return treeMap;
     }
@@ -108,6 +120,17 @@ public class RoleServiceImpl implements RoleService {
         if (CollectionUtils.isNotEmpty(roleAuthorityDto.getMenuAuthDelete())) {
             //查出对应要删除的 角色权限表的id
             List<Long> ids = roleAuthorityMapper.getRoleAuthorityIdList(roleId,roleAuthorityDto.getMenuAuthDelete(), CommonConstant.ROLE_AUTHORITY_TYPE_MENU);
+            deleteRoleAuthorityIds.addAll(ids);
+        }
+
+        //处理部门权限
+        if (CollectionUtils.isNotEmpty(roleAuthorityDto.getDeptAuthAdd())) {
+            //添加新增的权限
+            roleAuthorityDto.getDeptAuthAdd().forEach(authId -> handleAddList(authId,2,roleId,addList));
+        }
+        if (CollectionUtils.isNotEmpty(roleAuthorityDto.getDeptAuthDelete())) {
+            //查出对应要删除的 角色权限表的id
+            List<Long> ids = roleAuthorityMapper.getRoleAuthorityIdList(roleId,roleAuthorityDto.getDeptAuthDelete(), CommonConstant.ROLE_AUTHORITY_TYPE_DEPARTMENT);
             deleteRoleAuthorityIds.addAll(ids);
         }
 

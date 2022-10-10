@@ -11,6 +11,7 @@
             <if test="jobName != null and jobName != ''">
                 and j.job_name like CONCAT('%', #{jobName}, '%')
             </if>
+            and j.deleted = 0
         </where>
     </sql>
     <insert id="insertJob" useGeneratedKeys="true" keyProperty="id">

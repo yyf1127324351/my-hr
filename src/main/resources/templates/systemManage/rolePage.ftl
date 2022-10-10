@@ -69,7 +69,28 @@
         </table>
     </div>
 </div>
-<div id="win"></div>
+
+<div style="display:none">
+    <div id="permission-dialog" class='dialog'>
+        <div style='width:250px;float:left;'>
+            <div style='color:red;margin-top: 10px; margin-left: 10px;font-weight:bold;'>1.菜单权限</div>
+            <div class="tree-wrapper" id="menu-tree-wrapper">
+            </div>
+        </div>
+        <div style='width:250px;float:left;'>
+            <div style='color:red;margin-top: 10px; margin-left: 10px;font-weight:bold;'>2.部门权限</div>
+            <div class="tree-wrapper" id="dept-tree-wrapper">
+            </div>
+        </div>
+        <div style='width:250px;float:left;'><div style='color:red;margin-top: 10px; margin-left: 10px;font-weight:bold;'>3.地点权限</div>
+            <div class="tree-wrapper" id="area-tree-wrapper">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 
 <div style="display:none">
     <div id="field-dialog" class='dialog'>
@@ -269,6 +290,36 @@
             closed: true   //已关闭
         });
 
+        $("#permission-dialog").dialog({
+            title:'角色权限分配',
+            width:'800',
+            height:'90%',
+            iconCls:'fa fa-edit',
+            shadow: false,
+            modal: true,
+            buttons:[{
+                text:'保存',
+                iconCls:'icon-ok',
+                handler:function(){
+                    saveAuthTree();
+                }
+            },{
+                text:'取消',
+                iconCls:'icon-cancel',
+                handler:function(){
+                    $("#permission-dialog").dialog('close');
+                }
+            }],
+            onClose:function(){
+                $("#permission-dialog").removeData("id");
+                $("#menu_tree-wrapper").html('');
+                $("#dept_tree-wrapper").html('');
+                $("#area_tree-wrapper").html('');
+            },
+            closable: true,
+            closed: true   //已关闭
+        });
+
     });
 
     function clearQuery() {
@@ -377,56 +428,6 @@
     }
 
     function authEdit(id) {
-        $("#win").append("<div id='new_win' class='easyui-dialog'>" +
-                "<div style='width:250px;float:left;'>" +
-                "<div style='color:red;margin-top: 10px; margin-left: 10px;font-weight:bold;'>1.菜单权限</div>" +
-                "<ul id='menu_manage_tree' class='easyui-tree' style='margin-left: 10px;'></ul>" +
-                "</div>" +
-                "<div style='width:250px;float:left;'>" +
-                "<div style='color:red;margin-top: 10px; margin-left: 10px;font-weight:bold;'>2.部门权限</div>" +
-                "<ul id='dept_manage_tree' class='easyui-tree' style='margin-left: 10px;'></ul>" +
-                "</div>" +
-                "<div style='width:250px;float:left;'>" +
-                "<div style='color:red;margin-top: 10px; margin-left: 10px;font-weight:bold;'>3.区域权限</div>" +
-                "<ul id='area_manage_tree' class='easyui-tree' style='margin-left: 10px;'></ul>" +
-                "</div>" +
-                "</div>");// 创建一个临时层，关闭销毁。
-        $('#new_win').dialog({
-            title:'角色权限分配',
-            width:'800',
-            height:'90%',
-            iconCls:'icon-add',
-            shadow:false,
-            modal:true,
-            onOpen:function(){
-                showAuthTree(id);
-            },//回调onload函数
-            buttons:[{
-                text:'保存',
-                iconCls:'icon-ok',
-                handler:function(){
-                    saveAuthTree(id);
-                }
-            },{
-                text:'取消',
-                iconCls:'icon-cancel',
-                handler:function(){
-                    $('#new_win').dialog('close');
-                    roleAuth = {};
-                }
-            }],
-            onClose:function(){
-                $('#new_win').dialog("destroy");
-                roleAuth = {};
-            },
-            closable: true,
-            closed: true   //已关闭
-        });
-
-        $('#new_win').dialog('open');
-    }
-    //生成权限树
-    function showAuthTree(id) {
         $.ajax({
             type : "POST",
             url : '/role/getAuthTree',
@@ -435,6 +436,10 @@
             success : function(result) {
                 $.messager.progress('close');
                 if(result.code == 200){
+                    $("#menu-tree-wrapper").append('<ul id="menu_manage_tree"></ul>');
+                    $("#dept-tree-wrapper").append('<ul id="dept_manage_tree"></ul>');
+                    $("#area-tree-wrapper").append('<ul id="area_manage_tree"></ul>');
+                    //菜单权限树
                     $('#menu_manage_tree').tree({
                         data: result.data.menuTreeData,
                         animate: true,
@@ -451,6 +456,37 @@
                             $(node.target).parent('li').find('span.tree-checkbox').removeClass('tree-checkbox0 tree-checkbox1').addClass(checkOrNo);
                         }
                     });
+
+                    //部门权限树
+                    $('#dept_manage_tree').tree({
+                        data: result.data.deptTreeData,
+                        animate: true,
+                        cascadeCheck: false,
+                        checkbox: true,
+                        lines: true,
+                        onLoadSuccess: function (node, data) {
+                            clearTreeIcon();
+                            var nodes = $(this).tree('getChecked');
+                            roleAuth.deptAuthBefore = _.pluck(nodes, 'id');
+                        },
+                        onCheck: function(node, checked) {
+                            var checkOrNo = checked ? 'tree-checkbox1' : 'tree-checkbox0';
+                            //获取选中节点后，校验父节点是否被选中，如果父节点已经被选中，则该节点必须选中，不能取消
+                            if (checkOrNo == 'tree-checkbox0'){
+                                var parentNode = $(this).tree('getParent', node.target); //获取选中节点的父节点
+                                if (parentNode.checked) {
+                                    $(node.target).parent('li').find('span.tree-checkbox').removeClass('tree-checkbox0 tree-checkbox1').addClass("tree-checkbox1");
+                                    layer.alert('父部门已选中，无法取消当前选中状态! ', {icon: 0});
+                                    return false;
+                                }
+                            }
+
+                            $(node.target).parent('li').find('span.tree-checkbox').removeClass('tree-checkbox0 tree-checkbox1').addClass(checkOrNo);
+
+                        }
+                    });
+
+                    //地区权限树
                     $('#area_manage_tree').tree({
                         data: result.data.areaTreeData,
                         animate: true,
@@ -485,6 +521,9 @@
                         }
                     });
 
+                    $("#permission-dialog").data("id", id);
+                    $("#permission-dialog").dialog("open");
+
                 }else {
                     layer.alert(result.message, {icon: 5, title: "提示"});
                 }
@@ -494,20 +533,29 @@
                 layer.alert('系统异常', {icon: 5, title: "提示"});
             }
         });
+
     }
 
-    function saveAuthTree(id) {
+    function saveAuthTree() {
         //菜单
         roleAuth.menuAuthAfter = _.pluck($('#menu_manage_tree').tree('getChecked'), 'id');
         var menuAuthAdd = _.difference(roleAuth.menuAuthAfter, roleAuth.menuAuthBefore);
         var menuAuthDelete = _.difference(roleAuth.menuAuthBefore, roleAuth.menuAuthAfter);
 
+        //部门
+        roleAuth.deptAuthAfter = _.pluck($('#dept_manage_tree').tree('getChecked'), 'id');
+        var deptAuthAdd = _.difference(roleAuth.deptAuthAfter, roleAuth.deptAuthBefore);
+        var deptAuthDelete = _.difference(roleAuth.deptAuthBefore, roleAuth.deptAuthAfter);
+
         //地区
         roleAuth.areaAuthAfter = _.pluck($('#area_manage_tree').tree('getChecked'), 'id');
         var areaAuthAdd = _.difference( roleAuth.areaAuthAfter, roleAuth.areaAuthBefore);
         var areaAuthDelete = _.difference(roleAuth.areaAuthBefore, roleAuth.areaAuthAfter);
+
+        //判断是否有修改
         if(_.isEqual(roleAuth.menuAuthAfter, roleAuth.menuAuthBefore)
-                && _.isEqual(roleAuth.areaAuthAfter, roleAuth.areaAuthBefore)){
+                && _.isEqual(roleAuth.deptAuthAfter, roleAuth.deptAuthBefore)
+                    && _.isEqual(roleAuth.areaAuthAfter, roleAuth.areaAuthBefore) ){
             layer.alert('没有修改的内容！', {icon: 0, title: "提示"});
             return false;
         }
@@ -525,16 +573,18 @@
             data: {
                 'menuAuthAdd': menuAuthAdd,
                 'menuAuthDelete':menuAuthDelete,
+                'deptAuthAdd': deptAuthAdd,
+                'deptAuthDelete':deptAuthDelete,
                 'areaAuthAdd':areaAuthAdd,
                 'areaAuthDelete':areaAuthDelete,
-                'roleId':id
+                'roleId':$("#permission-dialog").data("id")
             },
             dataType: "json",
             traditional:true,
             success: function (result) {
                 $.messager.progress('close');
                 if(result.code == 200){
-                    $('#new_win').dialog('close'); roleAuth = {};
+                    $('#permission-dialog').dialog('close'); roleAuth = {};
                     layer.alert(result.message, {icon: 6, title: "提示"});
                 }else {
                     layer.alert(result.message, {icon: 5, title: "提示"});

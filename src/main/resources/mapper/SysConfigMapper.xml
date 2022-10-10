@@ -151,7 +151,7 @@
         0 as parentId
 		FROM sys_config_type t
 		LEFT JOIN sys_config_value v on t.id = v.type_id
-		WHERE t.type_code = 'OfficeArea' and v.deleted = 0 and t.deleted = 0
+		WHERE t.type_code = 'WorkPlace' and v.deleted = 0 and t.deleted = 0
 
     </select>
 

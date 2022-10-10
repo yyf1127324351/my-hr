@@ -53,7 +53,7 @@ public class MenuServiceImpl implements MenuService {
             List<MenuVo> newMenuVoList = MenuVo.convertToTreeDataByParentId(menuVoList);
             MenuVo menuVo = new MenuVo();
             menuVo.setId(0L);
-            menuVo.setState("close");
+//            menuVo.setState("closed");
             menuVo.setText("菜单");
             menuVo.setName("菜单");
             menuVo.setHasChild(1);
