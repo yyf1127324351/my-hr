@@ -6,10 +6,16 @@
     <sql id="sql_where_job">
         <where>
             <if test="jobId != null ">
-                and j.job_id = #{jobId}
+                and j.job_id like CONCAT('%', #{jobId}, '%')
             </if>
             <if test="jobName != null and jobName != ''">
                 and j.job_name like CONCAT('%', #{jobName}, '%')
+            </if>
+            <if test="status!=null and status==1">
+                <![CDATA[ and j.start_date<=#{queryDate} and j.end_date>=#{queryDate}]]>
+            </if>
+            <if test="status!=null and status==2">
+                <![CDATA[ and (j.end_date < #{queryDate} or j.start_date > #{queryDate}) ]]>
             </if>
             and j.deleted = 0
         </where>

@@ -13,12 +13,24 @@
         <div style="padding: 4px 5px;">
             <div class="search-row">
                 <div class="form-group">
+                    <label class="search-label">查询日期:</label>
+                    <input class="easyui-datebox" type="text" name="queryDate" id="queryDate" style="width:100px;">
+                </div>
+                <div class="form-group">
+                    <label class="search-label">状态:</label>
+                    <select class="easyui-combobox" type="text" name="queryStatus" id="queryStatus" data-options="editable:false" style="width:80px;">
+                        <option value=0 >全部</option>
+                        <option value=1 selected>有效</option>
+                        <option value=2>无效</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label class="search-label">岗位ID:</label>
-                    <input name="jobId" class="easyui-textbox" type="text" style="width: 120px;">
+                    <input name="jobId" id="queryJobId" class="easyui-textbox" type="text" style="width: 120px;">
                 </div>
                 <div class="form-group">
                     <label class="search-label">岗位名称:</label>
-                    <input name="jobName" class="easyui-textbox" type="text" style="width: 120px;">
+                    <input name="jobName" id="queryJobName" class="easyui-textbox" type="text" style="width: 120px;">
                 </div>
 
                 <div class="form-group">
@@ -99,6 +111,8 @@
             }
         };
 
+        $("#queryDate").datebox('setValue',new Date().format('yyyy-MM-dd'));
+
         $("#jobName").jobNameBox({
             valueSelector: '#jobNameId',
         });
@@ -118,6 +132,12 @@
             pageSize: 50,
             pageList: [50, 100, 200],
             toolbar: '#button_tab',
+            onBeforeLoad: function (param) {
+                var queryDate = $("#queryDate").datebox('getValue');
+                param.queryDate = queryDate;
+                var status =$("#queryStatus").combobox('getValue');
+                param.status = status;
+            },
             onLoadSuccess: function (data) {
             },
             frozenColumns: [[
@@ -182,12 +202,27 @@
     });
 
     function queryList() {
-        var data = getFormData("search_form");
-        $('#data_table').datagrid({url: '/job/queryJobPageList', queryParams: data});
+        var queryParams = {};
+        var queryDate = $("#queryDate").datebox('getValue');
+        if (!queryDate) {
+            layer.alert("查询日期不能为空", {icon: 5, title: "提示"});
+        }
+
+        var queryStatus = $("#queryStatus").combobox('getValue');
+        var jobName = $("#queryJobName").val().replace(/\s+/g, "");
+        var jobId = $("#queryJobId").val().replace(/\s+/g, "");
+        queryParams.queryDate = queryDate;
+        queryParams.status = queryStatus;
+        queryParams.jobName = jobName;
+        queryParams.jobId = jobId;
+        $('#data_table').datagrid({url: '/job/queryJobPageList', queryParams: queryParams});
     }
 
     function clearQuery() {
         $('#search_form').form('clear');
+        var queryDate = new Date().format("yyyy-MM-dd");
+        $("#queryDate").datebox('setValue',queryDate);
+        $("#queryStatus").combobox('setValue',1);
         queryList();
     }
 
