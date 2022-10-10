@@ -205,7 +205,7 @@
         });
 
         $("#field-dialog").dialog({
-            title:'角色列属性权限编辑',
+            title:'角色列属性权限分配',
             width:'70%',
             height:'80%',
             top: '5%',
