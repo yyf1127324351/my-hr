@@ -77,12 +77,12 @@
             <div class="tree-wrapper" id="menu-tree-wrapper">
             </div>
         </div>
-        <div style='width:250px;float:left;'>
+        <div style='width:300px;float:left;'>
             <div style='color:red;margin-top: 10px; margin-left: 10px;font-weight:bold;'>2.部门权限</div>
             <div class="tree-wrapper" id="dept-tree-wrapper">
             </div>
         </div>
-        <div style='width:250px;float:left;'><div style='color:red;margin-top: 10px; margin-left: 10px;font-weight:bold;'>3.地点权限</div>
+        <div style='width:200px;float:left;'><div style='color:red;margin-top: 10px; margin-left: 10px;font-weight:bold;'>3.地点权限</div>
             <div class="tree-wrapper" id="area-tree-wrapper">
             </div>
         </div>
@@ -293,7 +293,7 @@
         $("#permission-dialog").dialog({
             title:'角色权限分配',
             width:'800',
-            height:'90%',
+            height:'80%',
             iconCls:'fa fa-edit',
             shadow: false,
             modal: true,
