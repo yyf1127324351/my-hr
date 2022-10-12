@@ -22,4 +22,14 @@ public interface DepartmentMapper {
     List<DepartmentDto> queryDepartmentPageList(HashMap<String, Object> map);
 
     List<TreeNode> getAllDeptTreeNode(@Param("queryDate") String queryDate);
+
+    int querySameDepartmentCount(DepartmentDto departmentDto);
+
+    Long insertDepartment(DepartmentDto departmentDto);
+
+    DepartmentDto queryDepartmentById(@Param("id") Long id, @Param("queryDate") String queryDate);
+
+    DepartmentDto queryDepartmentByPkid(@Param("pkid") Long pkid);
+
+    int updateDepartmentByPkid(DepartmentDto departmentDto);
 }

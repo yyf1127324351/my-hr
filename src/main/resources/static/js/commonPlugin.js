@@ -335,7 +335,7 @@ function userDialog(options) {
     $("#" + dialogId).dialog({
         title:'人员选择' + (options.multiple ? "" : "&nbsp;(双击选中)"),
         width: 550,
-        height: (options.multiple ? 470 : 420),
+        height: (options.multiple ? 380 : 360),
         iconCls:'icon-man',
         shadow:false,
         modal:true,

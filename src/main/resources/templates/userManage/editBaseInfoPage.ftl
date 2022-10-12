@@ -131,7 +131,8 @@
         if(!inductionTeacherName) {
             layer.alert("入职导师不能为空", {icon: 5, title: "提示"});
             return;
-        }else if(!reportLeaderName) {
+        }
+        if(!reportLeaderName) {
             layer.alert("汇报对象不能为空", {icon: 5, title: "提示"});
             return;
         }

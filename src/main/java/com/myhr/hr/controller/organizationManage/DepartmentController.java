@@ -3,6 +3,7 @@ package com.myhr.hr.controller.organizationManage;
 import com.myhr.common.BaseResponse;
 import com.myhr.common.SessionContainer;
 import com.myhr.hr.controller.common.BaseController;
+import com.myhr.hr.model.DepartmentDto;
 import com.myhr.hr.service.organizationManage.DepartmentService;
 import com.myhr.hr.vo.TreeNode;
 import com.myhr.utils.DateUtil;
@@ -66,6 +67,24 @@ public class DepartmentController extends BaseController {
             log.error("queryDepartmentPageListException:" + e.getMessage(), e);
             return BaseResponse.error();
         }
+
+    }
+
+    /**
+     * 部门管理-新增
+     */
+    @RequestMapping("/addDepartment")
+    @ResponseBody
+    public BaseResponse addDepartment(DepartmentDto departmentDto) {
+
+        try {
+            Long operateUser = SessionContainer.getUserId();
+            return departmentService.addDepartment(departmentDto,operateUser);
+        }catch (Exception e){
+            log.error("addDepartmentException:" + e.getMessage(), e);
+            return BaseResponse.error();
+        }
+
 
     }
 

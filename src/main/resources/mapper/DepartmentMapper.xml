@@ -11,14 +11,26 @@
         d.has_child as hasChild,
         d.level as level,
         d.leader_id as leaderId,
+        d.hrbp_id as hrbpId,
         d.path as path,
+        d.path_name as pathName,
         d.start_date as startDate,
-        d.end_date as endDate
+        d.end_date as endDate,
+        d.introduction as introduction
     </sql>
 
     <sql id="where_department">
         <where>
             d.level > 0
+            <if test="id != null">
+                and d.id = #{id}
+            </if>
+            <if test="queryId != null and queryId != ''">
+                and d.id like CONCAT('%', #{queryId}, '%')
+            </if>
+            <if test="name != null and name != ''">
+                and d.name like CONCAT('%', #{name}, '%')
+            </if>
             <if test="status!=null and status==1">
                 <![CDATA[ and d.start_date<=#{queryDate} and d.end_date>=#{queryDate}]]>
             </if>
@@ -29,6 +41,85 @@
         </where>
     </sql>
 
+    <insert id="insertDepartment" useGeneratedKeys="true" keyProperty="pkid">
+        INSERT INTO org_department (
+        id,
+        name,
+        parent_id,
+        level,
+        leader_id,
+        hrbp_id,
+        path,
+        path_name,
+        introduction,
+        start_date,
+        end_date,
+        create_user,
+        create_time
+        )(
+            SELECT
+            (max(id) + 1) id,
+            #{name} name,
+            #{parentId} parent_id,
+            #{level} level,
+            #{leaderId} leader_id,
+            #{hrbpId} hrbp_id,
+            #{path} path,
+            #{pathName} path_name,
+            #{introduction} introduction,
+            #{startDate} start_date,
+            #{endDate} start_date,
+            #{createUser} create_user,
+            #{createTime} create_time
+            FROM
+            org_department
+        )
+    </insert>
+    <update id="updateDepartmentByPkid">
+        UPDATE org_department
+        <set>
+            <if test="name != null and name != ''">
+                `name` = #{name},
+            </if>
+            <if test="parentId != null">
+                parent_id = #{parentId},
+            </if>
+            <if test="hasChild != null">
+                has_child = #{hasChild},
+            </if>
+            <if test="level != null">
+                `level` = #{level},
+            </if>
+            <if test="leaderId != null">
+                leader_id = #{leaderId},
+            </if>
+            <if test="hrbpId != null">
+                hrbp_id = #{hrbpId},
+            </if>
+            <if test="path != null and path != ''">
+                path = #{path},
+            </if>
+            <if test="pathName != null and pathName != ''">
+                path_name = #{pathName},
+            </if>
+            <if test="introduction != null and introduction != ''">
+                introduction = #{introduction},
+            </if>
+            <if test="startDate != null and startDate != ''">
+                start_date = #{startDate},
+            </if>
+            <if test="endDate != null and endDate != ''">
+                end_date = #{endDate},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser},
+            </if>
+        </set>
+        where pkid = #{pkid}
+    </update>
 
 
     <select id="queryDepartmentList" resultType="com.myhr.hr.model.DepartmentDto">
@@ -56,6 +147,7 @@
         <include refid="select_department_column"/>
         FROM org_department d
         <include refid="where_department"/>
+        ORDER BY d.create_time DESC
     </select>
     <select id="getAllDeptTreeNode" resultType="com.myhr.hr.vo.TreeNode">
         SELECT
@@ -68,5 +160,41 @@
         FROM org_department d
         WHERE d.level > 0 and d.deleted = 0
         <![CDATA[ and d.start_date<=#{queryDate} and d.end_date>=#{queryDate}]]>
+    </select>
+    <select id="querySameDepartmentCount" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM org_department
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="parentId != null">
+                and parent_id = #{parentId}
+            </if>
+            <if test="name != null">
+                and name = #{name}
+            </if>
+            <if test="endDate != null">
+                <![CDATA[ and start_date <= #{endDate} ]]>
+            </if>
+            <if test="startDate != null">
+                and end_date >= #{startDate}
+            </if>
+        </where>
+    </select>
+    <select id="queryDepartmentById" resultType="com.myhr.hr.model.DepartmentDto">
+        SELECT
+        <include refid="select_department_column"/>
+        FROM org_department d
+        WHERE d.id = #{id}
+        <![CDATA[ and d.start_date<=#{queryDate} and d.end_date>=#{queryDate}]]>
+        and d.deleted = 0
+    </select>
+    <select id="queryDepartmentByPkid" resultType="com.myhr.hr.model.DepartmentDto">
+        SELECT
+        <include refid="select_department_column"/>
+        FROM org_department d
+        WHERE d.pkid = #{pkid}
+        and d.deleted = 0
     </select>
 </mapper>

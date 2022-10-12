@@ -147,7 +147,7 @@
                         var isValid = row.isValid;
                         if (isValid == 0) {
                         }else {
-                            html = html + '<a class="sel_btn a_margin" href="javascript:openEditDialog()" >更新</a>';
+                            html = html + '<a class="sel_btn a_margin" href="javascript:openEditDialog()" >修改</a>';
                             html = html + '<a class="sel_btn a_margin" href="javascript:openChangeDialog()">变更</a>';
                         }
                         return html;
