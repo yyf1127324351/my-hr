@@ -99,7 +99,10 @@ function formatDate(date,format){
     return format;
 }
 
-
+/*字符串替换*/
+String.prototype.replaceAll = function (FindText, RepText) {
+    return this.replace(new RegExp(FindText, "g"), RepText);
+}
 
 // $(function() {
 //     // datagrid数据表格ID

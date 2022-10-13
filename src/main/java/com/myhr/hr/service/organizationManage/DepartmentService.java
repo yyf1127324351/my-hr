@@ -13,4 +13,6 @@ public interface DepartmentService {
     BaseResponse queryDepartmentPageList(HashMap<String, Object> map);
 
     BaseResponse addDepartment(DepartmentDto departmentDto, Long operateUser);
+
+    BaseResponse expireDepartment(DepartmentDto departmentDto, Long operateUser);
 }

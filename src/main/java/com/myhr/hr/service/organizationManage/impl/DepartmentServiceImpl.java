@@ -109,6 +109,27 @@ public class DepartmentServiceImpl implements DepartmentService {
         return BaseResponse.success("新增部门成功", dept);
     }
 
+    @Override
+    public BaseResponse expireDepartment(DepartmentDto paramDept, Long operateUser) {
+        //1获取当前部门信息
+        DepartmentDto dept = departmentMapper.queryDepartmentByPkid(paramDept.getPkid());
+
+        //2.获取所有子部门
+        List<DepartmentDto> childrenList = departmentMapper.queryAllChildrenDepartment(dept.getPath(), paramDept.getEndDate());
+
+
+
+        //3.判断所有子部门下是否还有未离职的员工
+
+        //4.如果部门下无员工，则进行部门，和子部门失效，
+
+        //5.将失效的部门和子部门下的岗位进行失效
+
+
+
+        return BaseResponse.success("已完成对该部门以及其子部门的失效");
+    }
+
     private BaseResponse checkDepartmentIsExist(DepartmentDto departmentDto) {
         if (DateUtil.isBefore(departmentDto.getEndDate(), departmentDto.getStartDate())) {
             return BaseResponse.paramError("失效日期不能早于生效日期");
@@ -144,11 +165,14 @@ public class DepartmentServiceImpl implements DepartmentService {
     private TreeNode departmentConvertToTreeNode(DepartmentDto dept) {
         TreeNode treeNode = new TreeNode();
         treeNode.setId(dept.getId());
+        treeNode.setPkid(dept.getPkid());
         treeNode.setName(dept.getName());
         treeNode.setText(dept.getName());
         treeNode.setLevel(dept.getLevel());
         treeNode.setParentId(dept.getParentId());
         treeNode.setHasChild(dept.getHasChild());
+        treeNode.setStartDate(dept.getStartDate());
+        treeNode.setEndDate(dept.getEndDate());
         return treeNode;
     }
 }

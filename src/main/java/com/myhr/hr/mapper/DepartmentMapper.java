@@ -32,4 +32,6 @@ public interface DepartmentMapper {
     DepartmentDto queryDepartmentByPkid(@Param("pkid") Long pkid);
 
     int updateDepartmentByPkid(DepartmentDto departmentDto);
+
+    List<DepartmentDto> queryAllChildrenDepartment(@Param("path") String path, @Param("endDate") String endDate);
 }

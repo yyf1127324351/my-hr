@@ -197,4 +197,20 @@
         WHERE d.pkid = #{pkid}
         and d.deleted = 0
     </select>
+    <select id="queryAllChildrenDepartment" resultType="com.myhr.hr.model.DepartmentDto">
+        SELECT
+        <include refid="select_department_column"/>
+        FROM org_department d
+        <where>
+            <if test="path!=null and path!=''">
+                and d.path like concat(#{path}, '%')
+            </if>
+            <if test="endDate != null and endDate != ''">
+                <![CDATA[ and d.start_date<=#{endDate} and d.end_date>=#{endDate}]]>
+            </if>
+            and d.deleted = 0
+            order by level
+        </where>
+
+    </select>
 </mapper>

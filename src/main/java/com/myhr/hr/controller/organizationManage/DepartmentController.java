@@ -84,9 +84,24 @@ public class DepartmentController extends BaseController {
             log.error("addDepartmentException:" + e.getMessage(), e);
             return BaseResponse.error();
         }
-
-
     }
+
+    /**
+     * 部门管理-失效
+     */
+    @RequestMapping("/expireDepartment")
+    @ResponseBody
+    public BaseResponse expireDepartment(DepartmentDto departmentDto) {
+
+        try {
+            Long operateUser = SessionContainer.getUserId();
+            return departmentService.expireDepartment(departmentDto,operateUser);
+        }catch (Exception e){
+            log.error("expireDepartmentException:" + e.getMessage(), e);
+            return BaseResponse.error();
+        }
+    }
+
 
 
 }

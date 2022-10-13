@@ -30,7 +30,10 @@ public class TreeNode {
     private Integer type;//类型 0菜单 1按钮
     private String url; //菜单地址
     //部门树使用
+    private Long pkid;
     private String path;//部门路径
+    private String startDate;
+    private String endDate;
 
     //easyui tree 必需的属性
     private String text;

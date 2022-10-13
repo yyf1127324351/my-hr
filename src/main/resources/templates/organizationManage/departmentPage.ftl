@@ -124,7 +124,50 @@
 </div>
 
 
+<#-- 失效dialog -->
+<div style="display:none">
+    <div id="expireDeptDialog" class="dialog">
+        <form id="expireDeptForm">
+            <input type="hidden" id="expirePkid" name="pkid"/>
+            <input type="hidden" id="expireId" name="id"/>
+            <input type="hidden" id="expireParentEndDate"/>
+            <table style="width:95%;margin:10px 10px 10px 10px;">
+                <tr style="height:30px;">
+                    <td style="width: 80px;text-align:right;" >部门名称:</td>
+                    <td style="align:center;" class="readonly_style">
+                        <input id="expireName" name="name" class="easyui-textbox" type="text" readonly="readonly" style="width: 210px;"/>
+                    </td>
+                </tr>
+                <tr style="height:30px;">
+                    <td style="width: 80px;text-align:right;">部门级别:</td>
+                    <td style="align:center;" class="readonly_style">
+                        <input id="expireLevel" name="level" class="easyui-textbox" readonly="readonly" type="text" style="width: 210px;"/>
+                    </td>
+                </tr>
+                <tr style="height:30px;">
+                    <td style="width: 80px;text-align:right;">生效日期:</td>
+                    <td style="align:center" class="readonly_style">
+                        <input id="expireStartDate" name="startDate" class="easyui-textbox" type="text" readonly="readonly" style="width: 210px;"/>
+                    </td>
+                </tr>
+                <tr style="height:30px;">
+                    <td style="width: 80px;text-align:right;" >原失效日期:</td>
+                    <td style="align:center" class="readonly_style">
+                        <input id="expireOldEndDate" name="oldEndDate" class="easyui-textbox" type="text" readonly="readonly" style="width: 210px;"/>
+                    </td>
+                </tr>
+                <tr style="height:30px;">
+                    <td style="width: 80px;text-align:right;"><font size="3" color="red">*</font>新失效日期:</td>
+                    <td style="align:center">
+                        <input  class="easyui-datebox" data-options="editable:false,required:true" name="endDate" id="expireEndDate"  style="width: 210px;"  >
+                    </td>
+                </tr>
 
+            </table>
+
+        </form>
+    </div>
+</div>
 
 </body>
 
@@ -160,14 +203,29 @@
                 $(this).tree('select',node.target);
                 e.preventDefault();
 
-
                 var level = node.level;
-                //如果类型是按钮，则隐藏新增功能
-                if(level > 2) {
+                //如果该节点是3级部门，则隐藏新增功能
+                if(level >= 3) {
                     $('#dept_add').hide();
                 }else {
                     $('#dept_add').show();
                 }
+                //如果该节点是顶级部门，则隐藏平移，和失效功能
+                if (level <= 0) {
+                    $('#dept_del').hide();
+                    $('#dept_move').hide();
+                }else {
+                    $('#dept_del').show();
+                    $('#dept_move').show();
+                }
+
+                var nowQueryDate = $("#queryDate").datebox('getValue');
+                var nowDate = new Date().format("yyyy-MM-dd");
+                if (nowQueryDate != nowDate) {
+                    layer.alert('请选择当前日期并查询最新的部门架构后,再进行操作！', {icon: 0, title: "提示"});
+                    return false;
+                }
+
                 $('#handleDept').menu('show', {
                     left : e.pageX,
                     top : e.pageY,
@@ -179,16 +237,21 @@
                                 return;
                             }
                             openAddDeptDialog(node);
-                        } else if(item.text == '编辑') {
-                            updateDept(node);
+                        } else if(item.text == '平移') {
+
+
+
                         } else if(item.text == '失效') {
                             if(node.hasChild == 1) {
-                                layer.confirm('该部门下有子部门，确认全部失效吗？', {icon: 3},function () {
-                                    deleteDept(node);
+                                layer.confirm('该部门下有子部门，确认全部失效吗？', {icon: 3},function (index) {
+                                    layer.close(index);
+                                    openExpireDeptDialog(node);
+
                                 });
                             }else {
-                                layer.confirm('确认删除？', {icon: 3},function () {
-                                    deleteDept(node);
+                                layer.confirm('确认失效该部门吗？', {icon: 3},function (index) {
+                                    openExpireDeptDialog(node);
+                                    layer.close(index);
                                 });
                             }
 
@@ -295,8 +358,37 @@
             closed: true   //已关闭
         });
 
+        $("#expireDeptDialog").dialog({
+            width:'390',
+            height:'260',
+            resizable : false,
+            left: '25%',
+            close : true,
+            shadow:false,
+            modal:true,
+            buttons:[{
+                text:'提交',
+                iconCls:'icon-ok',
+                handler:function(){
+                    expireDepartment();
+                }
+            },{
+                text:'取消',
+                iconCls:'icon-cancel',
+                handler:function(){
+                    $('#expireDeptDialog').dialog('close');
+                }
+            }],
+            onClose:function(){
+                $("#expireDeptDialog form").form("reset");
+            },
+            closable: true,
+            closed: true   //已关闭
+        });
+
     });
-    
+
+    /*点击部门对应部门，进行搜索*/
     function deptTreeClickQueryList(id) {
         var queryDate = $("#queryDate").datebox('getValue');
         if (!queryDate) {
@@ -311,6 +403,7 @@
         $('#data_table').datagrid({url: '/department/queryDepartmentPageList', queryParams: queryParams});
     }
 
+    /*搜索*/
     function queryList() {
         var queryParams = {};
         var queryDate = $("#queryDate").datebox('getValue');
@@ -330,6 +423,7 @@
         $('#data_table').datagrid({url: '/department/queryDepartmentPageList', queryParams: queryParams});
     }
 
+    /*清空搜索条件*/
     function clearQuery() {
         $('#search_form').form('clear');
         var queryDate = new Date().format("yyyy-MM-dd");
@@ -339,6 +433,7 @@
         queryList();
     }
 
+    /*打开 新增部门窗口*/
     function openAddDeptDialog(node) {
         $('#addDeptDialog').dialog('setTitle','新增部门');
         $('#addDeptDialog').dialog('open');
@@ -355,6 +450,7 @@
 
     }
 
+    /*新增部门*/
     function addDepartment() {
         var name = $('#addName').textbox('getValue').replace(/\s+/g, "");
         if (!name) {
@@ -411,13 +507,78 @@
                     }
                 },
                 error :function(){
-                    layer.alert('saveOrUpdateUserInfoError', {icon: 5,title: "提示"});
+                    layer.alert('addDepartmentError', {icon: 5,title: "提示"});
                 }
             });
         });
     }
 
+    /*打开 失效部门窗口*/
+    function openExpireDeptDialog(node){
+        $('#expireDeptDialog').dialog('setTitle','失效部门');
+        $('#expireDeptDialog').dialog('open');
 
+        var parentNode = $('#dept_tree').tree('find', node.parentId);
+
+        $('#expireParentEndDate').val(parentNode.endDate);
+
+        var level = node.level + 1;
+        $('#expirePkid').val(node.pkid);
+        $('#expireId').val(node.id);
+        $('#expireName').textbox().textbox('setValue',node.name);
+        $('#expireLevel').textbox().textbox('setValue',level);
+        $('#expireStartDate').textbox().textbox('setValue',node.startDate);
+        $('#expireOldEndDate').textbox().textbox('setValue',node.endDate);
+
+    }
+
+    function expireDepartment() {
+
+        var startDate =  $('#expireStartDate').textbox('getValue');
+        var endDate =  $('#expireEndDate').textbox('getValue');
+        if (!endDate) {
+            layer.alert("新失效日期不能为空", {icon: 5, title: "提示"});
+            return;
+        }
+        var startDateNum = startDate.replaceAll('-', '');
+        var endDateNum = endDate.replaceAll('-', '');
+        if (endDateNum <= startDateNum) {
+            layer.alert("新失效日期必须晚于生效日期", {icon: 5, title: "提示"});
+            return;
+        }
+
+        var parentEndDate = $('#expireParentEndDate').val();
+        var parentEndDateNum = parentEndDate.replaceAll('-', '');
+        if (endDateNum > parentEndDateNum) {
+            layer.alert("新失效日期不能晚于父部门的失效日期<br/>["+parentEndDate+"]", {icon: 5, title: "提示"});
+            return;
+        }
+
+
+        var data = getFormData("expireDeptForm");
+
+        layer.confirm("确认对该部门以及其子部门进行失效吗？", {icon: 3}, function () {
+            $.ajax({
+                type : "POST",
+                url : "/department/expireDepartment",
+                dataType: "json",
+                data : data,
+                success : function(result) {
+                    if(result.code == 200){
+                        queryList();
+                        $('#expireDeptDialog').dialog('close');
+                        layer.alert(result.message, {icon: 1, title: "提示"});
+                    }else{
+                        //错误提示
+                        layer.alert(result.message, {icon: 5,title: "提示"});
+                    }
+                },
+                error :function(){
+                    layer.alert('expireDepartmentError', {icon: 5,title: "提示"});
+                }
+            });
+        });
+    }
 </script>
 
 </html>
