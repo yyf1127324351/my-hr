@@ -14,9 +14,14 @@ public class LoginResult {
     private boolean success;
 
     /**
-     * ticket
+     * TGT
      */
-    private String ticket;
+    private String tgt;
+
+    /**
+     * ST
+     */
+    private String st;
 
     /**
      * 组织编码

@@ -21,7 +21,7 @@ import org.springframework.core.Ordered;
  */
 @Configuration
 @Slf4j
-@ConditionalOnProperty(value = "cas.loginType", havingValue = "cas")
+@ConditionalOnProperty(value = "cas.openCas", havingValue = "true")
 public class CasFilterConfig {
 
     /**

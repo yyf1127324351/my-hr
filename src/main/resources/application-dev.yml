@@ -40,13 +40,15 @@ cas:
     logout: http://localhost:8888/logout
     index: http://localhost:8888/index
   # 动态开启 cas 单点登录
-  loginType: cas
+  openCas: true
   # cas 验票拦截路径
   urlPattern: /*
   # cas不拦截的路径
   ignorePattern: /static/*|/api/*|/test/*
-  # cas的路径
-  urls: '{"test":"https://sso-test.digi800.com",
-          "AZ":"https://sso.gaoyaya.com"
+  # cas服务端地址
+  urls: '{
+          "test":"https://sso-test.digi800.com",
+          "AZ":"https://sso.gaoyaya.com",
+          "BL":"https://sso.nukaka.com"
          }'
 

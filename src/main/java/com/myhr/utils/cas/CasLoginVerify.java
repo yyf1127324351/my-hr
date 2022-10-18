@@ -4,7 +4,15 @@ package com.myhr.utils.cas;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -17,8 +25,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+
+
+/**
+ *
+ * 通过 REST协议 验证cas登录
+ * */
 
 @Component
 @Slf4j
@@ -29,50 +45,96 @@ public class CasLoginVerify {
     @Value("#{${cas.urls}}")
     private Map<String, String> urlMap;
 
+    @Value("${cas.client.index}")
+    private String casClientIndex;
+
+
     /**
-     * 用户登录
+     * cas验证
      *
      * @param username 用户名
      * @param password 密码
-     * @return 登陆结果
+     * @return 登录结果
      */
-    public LoginResult login(String username, String password) {
+    public LoginResult doCasLoginVerify(String username, String password) {
         for (Map.Entry<String, String> entry : urlMap.entrySet()) {
             String organizationCode = entry.getKey();
             String url = entry.getValue();
-            LoginResult result = doLogin(url, username, password);
-            if (result.isSuccess()) {
-                result.setOrganizationCode(organizationCode);
-                return result;
+            LoginResult loginResult = doVerify(organizationCode,url, username, password);
+            if (null != loginResult && loginResult.isSuccess()) {
+                return loginResult;
             }
         }
         return null;
     }
 
     /**
-     * 用户登录
+     * cas验证
      *
      * @param organizationCode 组织编码
      * @param username         用户名
      * @param password         密码
-     * @return ticket
+     * @return 登录结果
      */
-    public LoginResult login(String organizationCode, String username, String password) {
+    public LoginResult doCasLoginVerify(String organizationCode, String username, String password) {
         String url = urlMap.get(organizationCode);
         if (StringUtils.isBlank(url)) {
             return null;
         }
-
-        LoginResult result = doLogin(url, username, password);
-        result.setOrganizationCode(organizationCode);
-        return result;
+        return this.doVerify(organizationCode, url, username, password);
     }
 
-    private LoginResult doLogin(String url, String username, String password) {
-        LoginResult result = new LoginResult();
+    /**
+     * cas验证
+     *
+     *
+     * @param organizationCode 组织编码
+     * @param casUrl cas服务地址
+     * @param username  用户名
+     * @param password  密码
+     * @return 登录结果
+     */
+    private LoginResult doVerify(String organizationCode, String casUrl, String username, String password) {
+        //获取TGT
+        String TGT = this.getCasTGT(casUrl, username, password);
+        if (StringUtils.isNotBlank(TGT)) {
+            LoginResult loginResult = new LoginResult();
+            loginResult.setTgt(TGT);
+            //获取ST
+            String ST = this.getCasST(casUrl,TGT);
+            if (StringUtils.isNotBlank(ST)) {
+                loginResult.setSt(ST);
+                //TODO 进行验证
+                String st = ST;
+                String indexUrl = casClientIndex + "?ticket=" + ST;
+                String validateUrl = casUrl + "/p3/serviceValidate" + "?service=" + casClientIndex + "&ticket=" + ST;
+
+                System.out.println(st);
+                System.out.println(indexUrl);
+                System.out.println(validateUrl);
+
+                //返回登录结果
+                loginResult.setOrganizationCode(organizationCode);
+                loginResult.setSuccess(true);
+                return loginResult;
+            }
+
+        }
+        return null;
+    }
+
+    /**
+     * @Description 获取TGT
+     * @param casUrl cas服务地址
+     * @param username 用户名
+     * @param password  密码
+     * @return TGT
+     */
+    private String getCasTGT(String casUrl, String username, String password) {
+        String ticket = "";
         try {
-            url += "/cas/v1/tickets";
-            URL u = new URL(url);
+            casUrl += "/cas/v1/tickets";
+            URL u = new URL(casUrl);
             if (HTTPS.equalsIgnoreCase(u.getProtocol())) {
                 ignoreSsl();
             }
@@ -85,24 +147,51 @@ public class CasLoginVerify {
             final String locationHeader = connection.getHeaderField("location");
             final int responseCode = connection.getResponseCode();
             boolean loginSuccess = (locationHeader != null && responseCode == HttpStatus.CREATED.value());
-            result.setSuccess(loginSuccess);
-//            logger.event("login")
-//                    .msg("doLogin")
-//                    .field("url", url)
-//                    .field("responseCode", responseCode)
-//                    .field("locationHeader", locationHeader)
-//                    .info();
             if (loginSuccess) {
-                String ticket = locationHeader.substring(locationHeader.lastIndexOf("/") + 1);
-                result.setTicket(ticket);
-
-                log.info("用户登录成功:username:{},ticket:{}",username,ticket);
+                ticket = locationHeader.substring(locationHeader.lastIndexOf("/") + 1);
+                log.info("获取TGT成功:username:{},TGT:{}",username,ticket);
+                return ticket;
             }
         } catch (IOException e) {
-            result.setSuccess(false);
+            log.error("获取TGT异常:" + e.getMessage(), e);
+            log.error("获取TGT异常:username{},调用服务{}", username, casUrl);
+            return ticket;
         }
-        return result;
+        return ticket;
     }
+
+    /**
+     * @Description 获取ST
+     * @param casUrl cas服务地址
+     * @param tgt TGT
+     * @return ST
+     */
+    private String getCasST(String casUrl, String tgt) {
+        String ST = "";
+        casUrl = casUrl + "/cas/v1/tickets/" + tgt;
+        HttpPost post = new HttpPost(casUrl);
+        CloseableHttpClient client = HttpClientBuilder.create().build();
+        List<BasicNameValuePair> parameters = new ArrayList<>();
+        parameters.add(new BasicNameValuePair("service", casClientIndex));
+        try {
+            HttpEntity entity = new UrlEncodedFormEntity(parameters, "utf-8");
+            post.setEntity(entity);
+            HttpResponse response = client.execute(post);
+            HttpEntity entity2 = response.getEntity();
+            ST = EntityUtils.toString(entity2);
+            log.error("获取ST成功:ST:{},调用服务:{}", ST, casUrl);
+        } catch (Exception e) {
+            log.error("获取ST异常:" + e.getMessage(), e);
+            log.error("获取ST异常:TGT:{},调用服务:{}", tgt, casUrl);
+            return ST;
+        }
+        return ST;
+    }
+
+
+
+
+
 
     /**
      * 用户登出
@@ -112,21 +201,11 @@ public class CasLoginVerify {
      */
     public void logout(String organizationCode, String ticket) {
         if (StringUtils.isBlank(organizationCode)) {
-//            logger.event("verify")
-//                    .msg("用户验证失败，组织编码为空")
-//                    .field("ticket", ticket)
-//                    .error();
             return;
         }
 
         String url = urlMap.get(organizationCode);
         if (StringUtils.isBlank(url)) {
-//            logger.event("logout")
-//                    .msg("用户登出失败，组织不存在")
-//                    .field("organizationCode", organizationCode)
-//                    .field("ticket", ticket)
-//                    .error();
-
             return;
         }
 
@@ -146,7 +225,9 @@ public class CasLoginVerify {
 
             } else if (HttpStatus.CREATED.value() == responseCode) {
                 // 201：ticket已经失效
-            } else {
+            } else if (HttpStatus.NOT_FOUND.value() == responseCode) {
+//                throw new UnauthorizedException(ErrorCode.TICKET_INVALIDATE);
+            }else {
 
             }
         } catch (IOException e) {
@@ -161,21 +242,11 @@ public class CasLoginVerify {
      */
     public void verify(String organizationCode, String ticket) {
         if (StringUtils.isBlank(organizationCode)) {
-//            logger.event("verify")
-//                    .msg("用户验证失败，组织编码为空")
-//                    .field("ticket", ticket)
-//                    .error();
             return;
         }
 
         String url = urlMap.get(organizationCode);
         if (StringUtils.isBlank(url)) {
-//            logger.event("verify")
-//                    .msg("用户验证失败，组织不存在")
-//                    .field("organizationCode", organizationCode)
-//                    .field("ticket", ticket)
-//                    .error();
-
             return;
         }
 

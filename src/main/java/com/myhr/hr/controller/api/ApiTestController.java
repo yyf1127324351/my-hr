@@ -46,7 +46,7 @@ public class ApiTestController {
     @GetMapping("/casVerify")
     public BaseResponse casVerify(String username, String password) {
 
-        LoginResult loginResult = casLoginVerify.login(username, password);
+        LoginResult loginResult = casLoginVerify.doCasLoginVerify(username, password);
 
         return BaseResponse.success(loginResult);
     }
