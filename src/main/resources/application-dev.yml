@@ -23,6 +23,12 @@ spring:
         max-idle: 16
         max-active: 32
         min-idle: 8
+  rabbitmq:
+      host: 10.50.10.49
+      port: 5672
+      username: guest
+      password: XjJr1btllOmW
+      virtual-host: /
 cas:
   server:
     urlPrefix: https://sso-test.digi800.com/cas
@@ -39,4 +45,8 @@ cas:
   urlPattern: /*
   # cas不拦截的路径
   ignorePattern: /static/*|/api/*|/test/*
+  # cas的路径
+  urls: '{"test":"https://sso-test.digi800.com",
+          "AZ":"https://sso.gaoyaya.com"
+         }'
 

@@ -1,10 +1,8 @@
 package com.myhr.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,9 +14,13 @@ public class JsonUtils {
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
 	static {
+
 		OBJECT_MAPPER.setTimeZone(TimeZone.getDefault());
 		OBJECT_MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+		OBJECT_MAPPER.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 		OBJECT_MAPPER.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY,true);
+		OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		OBJECT_MAPPER.registerModule(new JavaTimeModule());
 	}
 
 
@@ -48,7 +50,7 @@ public class JsonUtils {
 		return null;
 	}
 
-	public static <T> T fromJson(String json, Class<T> clazz)  {
+	public static <T> T toObject(String json, Class<T> clazz)  {
 		try {
 			return OBJECT_MAPPER.readValue(json, clazz);
 		} catch (IOException e) {
@@ -93,5 +95,7 @@ public class JsonUtils {
 		}
 		return new HashMap<>(0);
 	}
+
+
 
 }
