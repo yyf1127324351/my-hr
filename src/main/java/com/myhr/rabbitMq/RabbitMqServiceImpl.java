@@ -10,6 +10,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
+
 @Slf4j
 @Service
 public class RabbitMqServiceImpl implements RabbitMqService ,InitializingBean {
@@ -38,12 +40,12 @@ public class RabbitMqServiceImpl implements RabbitMqService ,InitializingBean {
 
     @Override
     public void sendMessage(String exchange, String routingKey, MessageContent messageContent) {
-
         try {
             String message = JsonUtils.toJson(messageContent);
+            String encoderMessage = Base64.getEncoder().encodeToString(message.getBytes());
             String msgId = messageContent.getId();
             CorrelationData correlationData = new CorrelationData(msgId);
-            rabbitTemplate.convertAndSend(exchange, routingKey, message, correlationData);
+            rabbitTemplate.convertAndSend(exchange, routingKey, encoderMessage, correlationData);
             log.info("发送队列消息成功，EXCHANGE:{}, ROUTING_KEY:{}, msgId:{}, 内容:{}", exchange, routingKey, msgId, message);
         }catch (Exception e) {
             log.error("发送队列消息报错，报错信息：" + e.getMessage(), e);

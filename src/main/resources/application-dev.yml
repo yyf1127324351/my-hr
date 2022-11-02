@@ -47,8 +47,14 @@ cas:
   ignorePattern: /static/*|/api/*|/test/*
   # cas服务端地址
   urls: '{
-          "test":"https://sso-test.digi800.com",
+          "test":"https://sso-test.make234.com",
           "AZ":"https://sso.gaoyaya.com",
           "BL":"https://sso.nukaka.com"
          }'
+
+auth:
+  tokenUrl: http://localhost:9090/auth/token.json
+  appKey: KfUpSJZgDjEYFkjAarhDSkhzhhZoXoAt
+  appSecret: qULxWWhbvnXcPbTJpCrvMQyoSfyYSWqsGmkyYxJqZYdjcixYJEwiGZdkyrJzFRIFZCFHGHaCbdYiWmHvmStFAUpmccBXPYmSaoulXDvPArjkbhAIRpoceJmKAjqKFoZb
+
 

@@ -20,7 +20,7 @@ public class RabbitMqConfig {
         //   return new Queue("TestDirectQueue",true,true,false);
 
         //一般设置一下队列的持久化就好,其余两个就是默认false
-        return new Queue(RabbitMqConstants.AUTH_ROLE_QUEUE, true);
+        return new Queue(RabbitMqConstants.AUTH_ROLE_QUEUE_NEW, true);
     }
 
     @Bean

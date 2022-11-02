@@ -11,7 +11,9 @@ public class MessageContent<T> {
 
     private String id;
 
-    private String operateType;
+    private String token;
+
+    private String operation;
 
     private T data;
 
@@ -19,14 +21,15 @@ public class MessageContent<T> {
         this.id = RandomStringUtils.randomAlphabetic(32);
     }
 
-    public MessageContent(String operateType, T data) {
+    public MessageContent(String operation,String token, T data) {
         this.id = RandomStringUtils.randomAlphabetic(32);
-        this.operateType = operateType;
+        this.operation = operation;
+        this.token = token;
         this.data = data;
     }
 
-    public static <T> MessageContent<T> build(String operateType, T data) {
-        return new MessageContent<>(operateType, data);
+    public static <T> MessageContent<T> build(String operateType,String token, T data) {
+        return new MessageContent<>(operateType,token, data);
     }
 
     public String getId() {
@@ -37,12 +40,12 @@ public class MessageContent<T> {
         this.id = id;
     }
 
-    public String getOperateType() {
-        return operateType;
+    public String getOperation() {
+        return operation;
     }
 
-    public void setOperateType(String operateType) {
-        this.operateType = operateType;
+    public void setOperation(String operation) {
+        this.operation = operation;
     }
 
     public T getData() {
@@ -51,5 +54,13 @@ public class MessageContent<T> {
 
     public void setData(T data) {
         this.data = data;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

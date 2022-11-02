@@ -20,21 +20,21 @@ import java.nio.charset.Charset;
 @Component
 public class RabbitConsumerOfRole {
 
-    @RabbitListener(queues = RabbitMqConstants.AUTH_ROLE_QUEUE)
-    @RabbitHandler
+//    @RabbitListener(queues = RabbitMqConstants.AUTH_ROLE_QUEUE)
+//    @RabbitHandler
     public void consume(Message message) {
         String jsonMessage = new String(message.getBody(), Charset.defaultCharset());
         MessageContent messageContent = JsonUtils.toObject(jsonMessage,MessageContent.class);
         log.info("jsonMessage:" + jsonMessage);
-        log.info("接受队列消息成功，队列:{}, msgId:{},内容:{}", RabbitMqConstants.AUTH_ROLE_QUEUE, messageContent.getId(), jsonMessage);
+        log.info("接受队列消息成功，队列:{}, msgId:{},内容:{}", RabbitMqConstants.AUTH_ROLE_QUEUE_NEW, messageContent.getId(), jsonMessage);
     }
 
-    @RabbitListener(queues = RabbitMqConstants.AUTH_ROLE_QUEUE2)
-    @RabbitHandler
+//    @RabbitListener(queues = RabbitMqConstants.AUTH_ROLE_QUEUE2)
+//    @RabbitHandler
     public void consume2(Message message) {
         String msgId = message.getMessageProperties().getCorrelationId();
         String data = new String(message.getBody(), Charset.defaultCharset());
-        log.info("接受队列消息成功，队列:{}, msgId:{},内容:{}", RabbitMqConstants.AUTH_ROLE_QUEUE, msgId, data);
+        log.info("接受队列消息成功，队列:{}, msgId:{},内容:{}", RabbitMqConstants.AUTH_ROLE_QUEUE_NEW, msgId, data);
     }
 
 
