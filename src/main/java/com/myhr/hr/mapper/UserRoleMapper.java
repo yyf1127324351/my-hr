@@ -15,4 +15,6 @@ public interface UserRoleMapper {
     int insertBatchUserRole(@Param("list") List<UserRoleDto> list);
 
     List<UserRoleDto> getRoleByUserId(@Param("userIds") List<Long> userIds);
+
+    List<UserRoleDto> getAllUserRole();
 }

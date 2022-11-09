@@ -1,5 +1,6 @@
 package com.myhr.hr.mapper;
 
+import com.myhr.auth.AuthRole;
 import com.myhr.hr.model.AuthRoleFieldDto;
 import com.myhr.hr.model.ColumnFieldDto;
 import com.myhr.hr.model.RoleDto;
@@ -30,4 +31,6 @@ public interface RoleMapper {
     int updateBatchAuthRoleField(@Param("authRoleFieldDto") AuthRoleFieldDto authRoleFieldDto);
 
     List<ColumnFieldDto> queryUserRoleColumnFiledList(@Param("userId") Long userId, @Param("fieldType") Integer fieldType);
+
+    List<AuthRole> getAllAuthRole();
 }

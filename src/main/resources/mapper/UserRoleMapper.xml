@@ -29,4 +29,13 @@
         and r.deleted = 0
 
     </select>
+    <select id="getAllUserRole" resultType="com.myhr.hr.model.UserRoleDto">
+        select
+            r.user_id as userId,
+            r.role_id as roleId,
+            u.login_name as loginName
+        from sys_auth_user_role r
+        LEFT JOIN user u on r.user_id = u.id
+        WHERE r.deleted = 0 and u.status = 1
+    </select>
 </mapper>

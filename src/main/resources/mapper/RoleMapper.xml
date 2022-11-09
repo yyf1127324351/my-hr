@@ -122,6 +122,15 @@
             and d.field_type = #{fieldType}
         ORDER BY f.column_field_id asc
     </select>
+    <select id="getAllAuthRole" resultType="com.myhr.auth.AuthRole">
+        select
+            r.id as applicationRoleKey,
+            r.role_name as name,
+            r.role_code as code,
+            r.status as status
+        from sys_auth_role r
+        WHERE r.deleted = 0
+    </select>
 
     <insert id="insertBatchAuthRoleField">
         insert into sys_auth_role_field  (
