@@ -29,6 +29,18 @@ spring:
       username: guest
       password: XjJr1btllOmW
       virtual-host: /
+      listener:
+        simple:
+            default-requeue-rejected: false
+            acknowledge-mode: auto
+            #设置消费失败后重发
+            retry:
+              #重发次数
+              max-attempts: 3
+              #开启重发
+              enabled: true
+              # 重试间隔(ms)
+              initial-interval: 5000
 cas:
   server:
     urlPrefix: https://sso-test.digi800.com/cas

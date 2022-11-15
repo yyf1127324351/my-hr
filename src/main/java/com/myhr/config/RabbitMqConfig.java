@@ -6,8 +6,32 @@ import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Configuration
 public class RabbitMqConfig {
+
+    private String DEAD_LETTER_QUEUE = "deadLetterQueue";
+    private String DEAD_LETTER_EXCHANGE = "deadLetterExchange";
+
+    // 声明死信Exchange
+    @Bean("deadLetterExchange")
+    public DirectExchange deadLetterExchange() {
+        return new DirectExchange(DEAD_LETTER_EXCHANGE);
+    }
+    // 声明死信队列
+    @Bean("deadLetterQueue")
+    public Queue deadLetterQueue() {
+        return new Queue(DEAD_LETTER_QUEUE);
+    }
+
+    //绑定死信队列
+    @Bean
+    public Binding deadLetterBinding(DirectExchange deadLetterExchange) {
+        return BindingBuilder.bind(deadLetterQueue()).to(deadLetterExchange).withQueueName();
+    }
+
 
     /**
      * @Description 该队列用于处理 各系统角色信息
@@ -20,7 +44,13 @@ public class RabbitMqConfig {
         //   return new Queue("TestDirectQueue",true,true,false);
 
         //一般设置一下队列的持久化就好,其余两个就是默认false
-        return new Queue(RabbitMqConstants.AUTH_ROLE_QUEUE_NEW, true);
+        Map<String, Object> args = new HashMap<>(3);
+//       x-dead-letter-exchange    这里声明当前队列绑定的死信交换机
+        args.put("x-dead-letter-exchange", DEAD_LETTER_EXCHANGE);
+//       x-dead-letter-routing-key  这里声明当前队列的死信路由key
+        args.put("x-dead-letter-routing-key", DEAD_LETTER_QUEUE);
+        args.put("x-message-ttl", 10 * 1000);
+        return new Queue(RabbitMqConstants.AUTH_ROLE_QUEUE_NEW, true, false, false, args);
     }
 
     @Bean

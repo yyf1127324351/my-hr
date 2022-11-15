@@ -9,6 +9,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
+import java.util.Base64;
 
 /**
  * @Description
@@ -35,6 +36,16 @@ public class RabbitConsumerOfRole {
         String msgId = message.getMessageProperties().getCorrelationId();
         String data = new String(message.getBody(), Charset.defaultCharset());
         log.info("接受队列消息成功，队列:{}, msgId:{},内容:{}", RabbitMqConstants.AUTH_ROLE_QUEUE_NEW, msgId, data);
+    }
+
+
+    //监听死信队列
+//    @RabbitListener(queues = "deadLetterQueue")
+//    @RabbitHandler
+    public void consumeDeadLetter(Message message) {
+        String jsonMessage = new String(message.getBody(), Charset.defaultCharset());
+        String jsonData = new String(Base64.getDecoder().decode(jsonMessage));
+        log.info("死信队列：" + jsonData);
     }
 
 
